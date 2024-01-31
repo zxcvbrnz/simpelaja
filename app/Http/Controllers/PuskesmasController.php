@@ -16,8 +16,4 @@ class PuskesmasController extends Controller
         // $data = profile::findOrFail($id)->profil;
         return Inertia::render('detailProfil');
     }
-
-    public function mamang()
-    {
-    }
 }

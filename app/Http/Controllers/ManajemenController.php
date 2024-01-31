@@ -122,7 +122,7 @@ class ManajemenController extends Controller
         } else if ($request->ket_skala ==  7) {
             $hasil = 7;
             $ket_skala = submanajemen::where('id', $id)->value('ket_skala_7');
-        } else if ($request->ket_skala ==  7) {
+        } else if ($request->ket_skala ==  10) {
             $hasil = 10;
             $ket_skala = submanajemen::where('id', $id)->value('ket_skala_10');
         } else if ($request->ket_skala ==  0) {

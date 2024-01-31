@@ -40,7 +40,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/indikator/ukm', [UkmController::class, 'program'])->name('ukm.program');
     Route::get('/indikator/ukm/{id}/program', [UkmController::class, 'subprogram'])->name('program.detail');
-    Route::get('/indikator/ukm/{id_program}/program/{id_sub}/data', [UkmController::class, 'nilai_ukm'])->name('program.detail.data');
 
     Route::middleware('admin')->group(function () {
         Route::get('/user-puskesmas', [AdminController::class, 'puskesmas'])->name('data.puskesmas');
@@ -49,10 +48,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/user-puskesmas/{id}/detail', [AdminController::class, 'detail_puskesmas'])->name('detail.puskesmas');
         Route::get('/user-puskesmas/{id}/detail/desa', [AdminController::class, 'detail_puskesmas_desa'])->name('detail.puskesmas.desa');
         Route::get('/user-puskesmas/{id}/detail/sdm', [AdminController::class, 'detail_puskesmas_sdm'])->name('detail.puskesmas.sdm');
+        Route::get('/indikator/ukm/{id_program}/program/{id_sub}/detail/', [AdminController::class, 'detail_sub_ukm'])->name('program.detail.admin');
     });
     Route::middleware('puskesmas')->group(function () {
         Route::post('/indikator/ukm/program/{id_sub}/data', [UkmController::class, 'creating_nilai'])->name('program.data.add');
         Route::get('/detail-puskesmas', [PuskesmasController::class, 'index'])->name('detail.profil');
+        Route::get('/indikator/ukm/{id_program}/program/{id_sub}/data', [UkmController::class, 'nilai_ukm'])->name('program.detail.data');
     });
 });
 

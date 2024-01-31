@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\desa;
+use App\Models\nilai_ukm;
 use App\Models\profile;
+use App\Models\subprogram;
+use App\Models\ukm;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -59,5 +63,24 @@ class AdminController extends Controller
             'user' => $data,
             'sdm' => $sdm
         ]);
+    }
+
+    public function detail_sub_ukm($id_program, $idsub)
+    {
+        $user = User::where('role', 'puskesmas')->get(['id', 'name']);
+
+        $name_program = ukm::findOrFail($id_program, ['id', 'program']);
+
+        $now = Carbon::now();
+
+        $sub = subprogram::findOrFail($idsub);
+
+        $data_ni = nilai_ukm::where('id_subprogram_ukm', $idsub)
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year)
+            // ->latest()
+            ->get();
+        return Inertia::render('Admin/Ukm/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'program' => $name_program]);
+        // return view('admin.indikator', ['id_indikator' => $id], compact('user', 'data_ni', 'indikator'));
     }
 }

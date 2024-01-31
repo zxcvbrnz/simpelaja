@@ -22,7 +22,8 @@ class UkmController extends Controller
     public function program()
     {
         $data = ukm::get(['id', 'program']);
-        return Inertia::render("Ukm/index", ['data' => $data]);
+        $route = Auth::user()->role === 'admin' ? 'Admin/Ukm/index' : 'Ukm/index';
+        return Inertia::render($route, ['data' => $data]);
     }
     // view form create program
     // untuk admin
@@ -136,7 +137,6 @@ class UkmController extends Controller
                 ->where('id_users', $user_id)
                 ->get();
             return Inertia::render("Ukm/Data", ['data' => $data, 'sub' => $sub]);
-            // return $data;
         }
         // else {
         //     // $id_puskes = User::pluck('id')->all();
@@ -146,6 +146,7 @@ class UkmController extends Controller
         //     return Inertia::render("", compact("data"));
         // }
     }
+
     public function create_nilai()
     {
         return inertia::render("");

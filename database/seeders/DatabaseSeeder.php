@@ -54,7 +54,7 @@ class DatabaseSeeder extends Seeder
             'kali' => 100,
             'target' => 95,
             'str_target' => '%',
-            'satuan' => '0',
+            'satuan' => 'Pasien',
             'type' => 1,
         ]);
     }

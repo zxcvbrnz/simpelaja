@@ -129,7 +129,7 @@ const form = useForm({
                             <div>
                                 <InputLabel>Target</InputLabel>
                                 <TextInput v-model="form.target" required type="number"></TextInput>
-                                <span class="ms-4">%</span>
+                                <span class="ms-4">{{ sub.str_target }}</span>
                             </div>
                             <div>
                                 <button :disabled="form.processing" type="submit"

@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('nilai_nasionalmutus', function (Blueprint $table) {
             $table->id();
+            $table->foreignId("id_users");
+            $table->foreignId("id_nasionalmutu");
+            $table->integer("penyebut");
+            $table->integer("pembilang");
+            $table->integer("kali");
+            $table->integer("hasil");
+            $table->integer("nilai_skala");
             $table->timestamps();
         });
     }
