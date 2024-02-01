@@ -82,9 +82,4 @@ class AdminController extends Controller
             ->get();
         return Inertia::render('Admin/Ukm/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'program' => $name_program]);
     }
-
-    public function add_ukm()
-    {
-        return Inertia::render('Admin/Ukm/Add');
-    }
 }

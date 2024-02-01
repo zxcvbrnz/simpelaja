@@ -57,5 +57,30 @@ class DatabaseSeeder extends Seeder
             'satuan' => 'Pasien',
             'type' => 1,
         ]);
+
+        \App\Models\ukpp::create([
+            'pelayanan' => 'Pelayanan Rawat lnap',
+        ]);
+        \App\Models\ukpp::create([
+            'pelayanan' => 'Pelavanan Rawat Jalan',
+        ]);
+        \App\Models\ukpp::create([
+            'pelayanan' => 'Pelayanan Gawat Darurat',
+        ]);
+        \App\Models\ukpp::create([
+            'pelayanan' => 'Pelayanan Laboratorium',
+        ]);
+
+        \App\Models\pelayanan::create([
+            'id_ukpp' => 1,
+            'subpelayanan' => "Asuhan Keperawatan / Kebidanan Individu Pada Pasien Rawat Inap",
+            'str_penyebut' => "Askep Individu Yang Diberikan Pada Pasien Rawat Inap",
+            'str_pembilang' => "Semua Pasien Rawat Inap",
+            'kali' => 100,
+            'target' => 100,
+            'str_target' => "%",
+            'satuan' => "Orang",
+            'type' => 1,
+        ]);
     }
 }

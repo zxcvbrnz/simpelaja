@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer("pembilang");
             $table->integer("kali");
             $table->integer("hasil");
+            $table->integer("target");
             $table->timestamps();
         });
     }

@@ -8,13 +8,16 @@ use App\Models\ukpp;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+
 
 class UkppController extends Controller
 {
     public function pelayanan()
     {
         $data = ukpp::get(["id", "pelayanan"]);
-        return Inertia::render("", ["data" => $data]);
+        $route = Auth::user()->role === 'admin' ? 'Admin/Ukpp/index' : 'Ukpp/index';
+        return Inertia::render($route, ["data" => $data]);
     }
     public function create_pelayanan()
     {
@@ -48,8 +51,9 @@ class UkppController extends Controller
     // ======== SEMUA FUNCTION SUBPELAYANAN ==========
     public function subpelayanan($id)
     {
+        $name = ukpp::findOrFail($id, ['id', 'pelayanan']);
         $data = pelayanan::where("id_ukpp", $id)->get(["id", "subpelayanan"]);
-        return Inertia::render("", ["data" => $data]);
+        return Inertia::render("Ukpp/SubPelayanan", ["data" => $data, 'name' => $name]);
     }
     public function create_subpelayanan()
     {
@@ -90,11 +94,16 @@ class UkppController extends Controller
         return redirect()->back();
     }
     // ========== SEMUA FUNCTION NILAI_PELAYANAN_UKPP ==========
-    public function nilai_pelayanan(Request $request)
+    public function nilai_pelayanan(Request $request, $id_pelayanan, $idsub)
     {
-        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : null;
-        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : null;
-        if ($startTime || $endTime) {
+        $user_id = auth()->user()->id;
+        $role = auth()->user()->role;
+        $sub = pelayanan::findOrFail($idsub);
+        if ($role !== "admin") {
+            $data = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
+                ->where('id_users', $user_id)
+                ->get();
+            return Inertia::render("Ukpp/Data", ['data' => $data, 'sub' => $sub]);
         }
     }
     public function create_nilai()

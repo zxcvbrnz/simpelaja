@@ -38,11 +38,11 @@ import SideLink from './SideLink.vue';
                     </SideLink>
                 </li>
                 <li v-if="$page.props.auth.user.role == 'admin'">
-                    <SideLink :href="route('data.puskesmas')" :active="route().current('data.puskesmas') ||
-                        route().current('detail.puskesmas') ||
-                        route().current('add.puskesmas') ||
-                        route().current('detail.puskesmas.desa') ||
-                        route().current('detail.puskesmas.sdm')">
+                    <SideLink :href="route('data.puskesmas')" :active="route().current('data.puskesmas')
+                        || route().current('detail.puskesmas')
+                        || route().current('add.puskesmas')
+                        || route().current('detail.puskesmas.desa')
+                        || route().current('detail.puskesmas.sdm')">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition duration-75 text-white"
                             fill="currentColor" viewBox="0 0 20 20">
                             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
@@ -67,7 +67,8 @@ import SideLink from './SideLink.vue';
                     </div>
                 </li>
                 <li>
-                    <SideLink :href="route('ukm.program')" :active="route().current('ukm.program') || route().current('program.detail')
+                    <SideLink :href="route('ukm.program')" :active="route().current('ukm.program')
+                        || route().current('program.detail')
                         || route().current('program.detail.data')
                         || route().current('program.detail.admin')
                         ">
@@ -75,22 +76,22 @@ import SideLink from './SideLink.vue';
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href="route('ukpp.pelayanan')" :active="route().current('ukpp.pelayanan') || route().current('program.detail')
-                        || route().current('program.detail.data')
-                        || route(
-                                            ">
-
+                    <SideLink :href="route('ukpp.pelayanan')" :active="route().current('ukpp.pelayanan')
+                        || route().current('pelayanan.detail')
+                        || route().current('pelayanan.detail.data')
+                        || route().current('pelayanan.detail.admin')
+                        ">
                         <span class="ms-10">UKPP</span>
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href=" route('dashboard') ">
+                    <SideLink :href="route('dashboard')">
 
                         <span class="ms-10">Manajemen</span>
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href=" route('dashboard') ">
+                    <SideLink :href="route('dashboard')">
 
                         <span class="ms-10">Nasional Mutu</span>
                     </SideLink>

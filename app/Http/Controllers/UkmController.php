@@ -38,14 +38,14 @@ class UkmController extends Controller
         ukm::create([
             "program" => $request->program,
         ]);
-        return redirect("");
+        return back();
     }
     // view form edit program
     // untuk admin
     public function edit_program($id)
     {
-        $data = ukm::find($id);
-        return Inertia::render("", compact("data"));
+        $data = ukm::findOrFail($id);
+        return Inertia::render('Admin/Ukm/Edit', ['data' => $data]);
     }
     // update data program
     // untuk admin
@@ -53,15 +53,15 @@ class UkmController extends Controller
     {
         $data = ukm::find($id);
         $data->update($request->all());
-        return redirect("");
+        return back();
     }
     // hapus data program
     // untuk admin
     public function delete_program($id)
     {
-        ukm::where('id', $id)->delete();
+        ukm::findOrFail($id)->delete();
         subprogram::where('id_ukm', $id)->delete();
-        return redirect()->back();
+        return back();
     }
 
     // SEMUA FUNCTION UNTUK SUBPROGRAM UKM

@@ -1,12 +1,14 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 
+const data = usePage().props.data;
+
 const form = useForm({
-    program: '',
+    program: data.program,
 });
 </script>
 
@@ -68,14 +70,14 @@ const form = useForm({
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    Tambah
+                                    Edit
                                 </span>
                             </div>
                         </li>
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <form @submit.prevent="form.post(route('add.ukm'))">
+                    <form @submit.prevent="form.patch(route('update.ukm', { id: data.id }))">
                         <div class="w-full md:w-1/2 space-y-3 pe-4">
                             <div>
                                 <InputLabel for="program" value="Nama Program" />
@@ -89,11 +91,11 @@ const form = useForm({
                         <div class="flex items-center gap-4 pt-4">
                             <button
                                 class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
-                                :disabled="form.processing">Submit</button>
+                                :disabled="form.processing">Update</button>
 
                             <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
                                 leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
-                                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Created.</p>
+                                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
                             </Transition>
                         </div>
                     </form>
