@@ -67,8 +67,10 @@ import SideLink from './SideLink.vue';
                     </div>
                 </li>
                 <li>
-                    <SideLink :href="route('ukm.program')" :active="route().current('ukm.program') || route().current('program.detail') ||
-                        route().current('program.detail.data')">
+                    <SideLink :href="route('ukm.program')" :active="route().current('ukm.program') || route().current('program.detail')
+                        || route().current('program.detail.data')
+                        || route().current('program.detail.admin')
+                        ">
                         <span class="ms-10">UKM</span>
                     </SideLink>
                 </li>

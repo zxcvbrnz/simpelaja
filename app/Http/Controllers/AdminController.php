@@ -73,7 +73,7 @@ class AdminController extends Controller
 
         $now = Carbon::now();
 
-        $sub = subprogram::findOrFail($idsub);
+        $sub = subprogram::findOrFail($idsub, ['nama', 'target', 'str_target']);
 
         $data_ni = nilai_ukm::where('id_subprogram_ukm', $idsub)
             ->whereMonth('created_at', $now->month)
@@ -81,6 +81,10 @@ class AdminController extends Controller
             // ->latest()
             ->get();
         return Inertia::render('Admin/Ukm/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'program' => $name_program]);
-        // return view('admin.indikator', ['id_indikator' => $id], compact('user', 'data_ni', 'indikator'));
+    }
+
+    public function add_ukm()
+    {
+        return Inertia::render('Admin/Ukm/Add');
     }
 }

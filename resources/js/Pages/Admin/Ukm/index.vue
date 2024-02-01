@@ -67,7 +67,7 @@ $(document).ready(function () {
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
                     <div class="flex justify-end mb-4">
-                        <Link :href="route('add.puskesmas')"
+                        <Link :href="route('add.ukms')"
                             class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                             class="bi bi-bookmark-plus-fill" viewBox="0 0 16 16">

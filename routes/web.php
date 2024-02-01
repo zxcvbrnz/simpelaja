@@ -43,7 +43,8 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('admin')->group(function () {
         Route::get('/user-puskesmas', [AdminController::class, 'puskesmas'])->name('data.puskesmas');
-        Route::get('/user-puskesmas/tambah-user', [AdminController::class, 'add_puskesmas'])->name('add.puskesmas');
+        Route::get('/indikator/ukm/tambah', [AdminController::class, 'add_ukm'])->name('add.ukms');
+        Route::get('/user-puskesmas/tambah-user', [UkmController::class, 'create_program'])->name('add.puskesmas');
         Route::post('register', [RegisteredUserController::class, 'store'])->name('register');
         Route::get('/user-puskesmas/{id}/detail', [AdminController::class, 'detail_puskesmas'])->name('detail.puskesmas');
         Route::get('/user-puskesmas/{id}/detail/desa', [AdminController::class, 'detail_puskesmas_desa'])->name('detail.puskesmas.desa');

@@ -29,7 +29,7 @@ class UkmController extends Controller
     // untuk admin
     public function create_program()
     {
-        return Inertia::render();
+        return Inertia::render('Admin/Ukm/Add');
     }
     // store data program
     // untuk admin

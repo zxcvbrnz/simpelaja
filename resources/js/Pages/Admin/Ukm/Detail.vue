@@ -2,7 +2,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
-// const data = usePage().props.data;
+const data = usePage().props.data;
+const user = usePage().props.user;
+const sub = usePage().props.sub;
 
 $(document).ready(function () {
 
@@ -108,10 +110,33 @@ $(document).ready(function () {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
-                                <th data-priority="1" class="text-start">Program</th>
+                                <th data-priority="1" class="text-start">Puskesmas</th>
+                                <th data-priority="2" class="text-start">Dilaporkan Pada</th>
+                                <th data-priority="3" class="text-start">Capaian Perbulan</th>
+                                <th data-priority="4" class="text-start">Target</th>
+                                <th data-priority="5" class="text-start">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <tr v-for="(user, index) in user" :key="index">
+                                <td>
+                                    <span><span class="mr-5 font-bold">{{ index + 1 }}</span>{{ user.name }}</span>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ sub.target + ' ' + sub.str_target }}</td>
+                                <td class="flex">
+                                    <Link
+                                        class="text-teal-600 hover:text-white border border-teal-600 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-carolina-blue font-medium rounded text-sm px-5 py-2 text-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
+                                        <path
+                                            d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
+                                    </svg>
+                                    </Link>
+                                </td>
+                            </tr>
                             <!-- <tr v-for="(data, index) in data" :key="index">
                                 <td class="flex justify-between">
                                     <span><span class="mr-5 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
