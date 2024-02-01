@@ -77,22 +77,24 @@ const form = useForm({
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <div class="w-full md:w-1/2 space-y-3 pe-4">
-                        <div>
-                            <InputLabel for="program" value="Nama aProgram" />
+                    <form action="">
+                        <div class="w-full md:w-1/2 space-y-3 pe-4">
+                            <div>
+                                <InputLabel for="program" value="Nama Program" />
 
-                            <TextInput id="program" v-model="form.program" type="text" class="mt-1 block w-full"
-                                autocomplete="program" />
+                                <TextInput id="program" v-model="form.program" type="text" class="mt-1 block w-full"
+                                    autocomplete="program" />
 
-                            <InputError :message="form.errors.program" class="mt-2" />
+                                <InputError :message="form.errors.program" class="mt-2" />
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex pt-4 mb-4">
-                        <Link :href="route('add.ukms')"
-                            class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">
-                        <span>Submit</span>
-                        </Link>
-                    </div>
+                        <div class="flex pt-4 mb-4">
+                            <Link :href="route('add.ukms')"
+                                class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">
+                            <span>Submit</span>
+                            </Link>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

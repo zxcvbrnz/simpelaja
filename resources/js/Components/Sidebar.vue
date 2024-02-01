@@ -75,19 +75,22 @@ import SideLink from './SideLink.vue';
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href="route('dashboard')">
+                    <SideLink :href="route('ukpp.pelayanan')" :active="route().current('ukpp.pelayanan') || route().current('program.detail')
+                        || route().current('program.detail.data')
+                        || route(
+                                            ">
 
                         <span class="ms-10">UKPP</span>
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href="route('dashboard')">
+                    <SideLink :href=" route('dashboard') ">
 
                         <span class="ms-10">Manajemen</span>
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href="route('dashboard')">
+                    <SideLink :href=" route('dashboard') ">
 
                         <span class="ms-10">Nasional Mutu</span>
                     </SideLink>

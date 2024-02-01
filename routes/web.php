@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PuskesmasController;
 use App\Http\Controllers\UkmController;
+use App\Http\Controllers\UkppController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -40,6 +41,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/indikator/ukm', [UkmController::class, 'program'])->name('ukm.program');
     Route::get('/indikator/ukm/{id}/program', [UkmController::class, 'subprogram'])->name('program.detail');
+
+    Route::get('/indikator/ukpp', [UkppController::class, 'pelayanan'])->name('ukpp.pelayanan');
 
     Route::middleware('admin')->group(function () {
         Route::get('/user-puskesmas', [AdminController::class, 'puskesmas'])->name('data.puskesmas');
