@@ -79,7 +79,7 @@ const form = useForm({
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
                     <div class="w-full md:w-1/2 space-y-3 pe-4">
                         <div>
-                            <InputLabel for="program" value="Nama Program" />
+                            <InputLabel for="program" value="Nama aProgram" />
 
                             <TextInput id="program" v-model="form.program" type="text" class="mt-1 block w-full"
                                 autocomplete="program" />
