@@ -99,17 +99,56 @@ class UkppController extends Controller
         $user_id = auth()->user()->id;
         $role = auth()->user()->role;
         $sub = pelayanan::findOrFail($idsub);
+
+        $now = Carbon::now();
+        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : $now->startOfMonth();
+        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : $now->endOfMonth();
+
         if ($role !== "admin") {
             $data = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
-                ->where('id_users', $user_id)
-                ->get();
-            return Inertia::render("Ukpp/Data", ['data' => $data, 'sub' => $sub]);
+                ->where('id_users', $user_id);
+
+            if ($startTime && $endTime) {
+                $data->whereBetween('created_at', [$startTime, $endTime]);
+            } else {
+                $data->whereMonth('created_at', $now->month)
+                    ->whereYear('created_at', $now->year);
+            }
+
+            $result = $data->get();
+            return Inertia::render("Ukpp/Data", ['data' => $result, 'sub' => $sub, 'request' => $request]);
         }
     }
     public function create_nilai()
     {
+        return inertia::render("");
     }
     public function creating_nilai(Request $request, $id)
     {
+        $data = pelayanan::findOrFail($id);
+        $id_user = Auth::user()->id;
+        $check = nilai_pelayanan::where('id_users', $id_user)
+            ->where('id_subpelayanan_ukpp', $data->id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::Now()->year);
+        if ($check->count() > 0) {
+            return back()->with('fail', 'Data Bulan ' . Carbon::now()->format('F') . ' Sudah Di Input');
+        }
+        //start logic hitungan.
+        $hasil_kali = '';
+        if ($data->type ==  1) {
+            $hasil_kali = $request->pembilang * $data->kali;
+        }
+        $hasil_keseluruhan = $hasil_kali / $request->penyebut;
+        // end login hitungan
+        nilai_pelayanan::create([
+            "id_subpelayanan_ukpp" => $data->id,
+            "id_users" => $id_user,
+            "penyebut" => $request->penyebut,
+            "pembilang" => $request->pembilang,
+            "kali" => $data->kali,
+            "hasil" => $hasil_keseluruhan,
+            "target" => $request->target,
+        ]);
     }
 }

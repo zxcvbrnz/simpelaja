@@ -61,7 +61,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/indikator/ukm/tambah', [UkmController::class, 'creating_program'])->name('add.ukm');
         Route::get('/indikator/ukm/{id}/edit', [UkmController::class, 'edit_program'])->name('edit.ukm');
         Route::patch('/indikator/ukm/{id}/edit', [UkmController::class, 'update_program'])->name('update.ukm');
-        Route::delete('/indikator/ukm/{id}/delete', [UkmController::class, 'delete_program'])->name('delete.ukm');
+        Route::delete('/indikator/ukm', [UkmController::class, 'delete_program'])->name('delete.ukm');
+
+        Route::get('/indikator/ukm/{id}/program/tambah', [UkmController::class, 'create_subprogram'])->name('add.subprogram');
+        Route::post('/indikator/ukm/{id}/program/tambah', [UkmController::class, 'creating_subprogram'])->name('create.subprogram');
+        Route::get('/indikator/ukm/{id}/program/{id_sub}/edit', [UkmController::class, 'edit_subprogram'])->name('edit.subprogram');
+        Route::patch('/indikator/ukm/{id}/program/{id_sub}/edit', [UkmController::class, 'editing_subprogram'])->name('update.subprogram');
+        Route::delete('/indikator/ukm/{id}/program', [UkmController::class, 'delete_subprogram'])->name('delete.subprogram');
 
         Route::get('/indikator/ukm/{id_program}/program/{id_sub}/detail/', [AdminController::class, 'detail_sub_ukm'])->name('program.detail.admin');
 
@@ -81,4 +87,6 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__ . '/auth.php'; { {
+    }
+}

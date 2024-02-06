@@ -1,38 +1,38 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 const data = usePage().props.data;
 
-// const confirmingUserDeletion = ref(false);
-
-
-// const form = useForm({
-//     password: '',
-// });
-
-// const confirmUserDeletion = () => {
-//     confirmingUserDeletion.value = true;
-
-//     nextTick(() => passwordInput.value.focus());
-// };
-
-// const deleteUser = () => {
-//     form.delete(route('profile.destroy'), {
-//         preserveScroll: true,
-//         onSuccess: () => closeModal(),
-//         onError: () => passwordInput.value.focus(),
-//         onFinish: () => form.reset(),
-//     });
-// };
-
-// const closeModal = () => {
-//     confirmingUserDeletion.value = false;
-
-//     form.reset();
-// };
-
+const confirmUkmDeletion = (id) => {
+    const form = useForm({
+        id: id,
+    });
+    Swal.fire({
+        title: "Apakah kamu yakin?",
+        text: "Kamu akan menghapus program ini!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.delete(route('delete.ukm'), {
+                onSuccess: () => {
+                    Swal.fire({
+                        title: "Dihapus!",
+                        text: "Program telah dihapus.",
+                        icon: "success"
+                    }).then((result) => {
+                        location.reload();
+                    });
+                }
+            });
+        }
+    });
+};
 $(document).ready(function () {
 
     var table = $('#example').DataTable({
@@ -75,19 +75,6 @@ $(document).ready(function () {
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    Indikator
-                                </span>
-                            </div>
-                        </li>
-                        <li aria-current="page">
-                            <div class="flex items-center">
-                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
-                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
                                     Upaya Kesehatan Masyarakat
                                 </span>
                             </div>
@@ -114,34 +101,21 @@ $(document).ready(function () {
                         </thead>
                         <tbody>
                             <tr v-for="(data, index) in data" :key="index">
-                                <td class="flex justify-between">
+                                <td class="flex justify-between items-center">
                                     <span><span class="mr-5 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
                                         index + 1 }}</span>{{ data.program }}</span>
-                                    <div class="flex justify-center space-x-2">
+                                    <div class="flex justify-center space-x-4 items-center">
                                         <Link :href="route('program.detail', { id: data.id })"
-                                            class="text-teal-600 hover:text-white border border-teal-600 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-carolina-blue font-medium rounded text-sm px-5 py-2 text-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                            <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                            <path
-                                                d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                        </svg>
+                                            class="text-teal-600 hover:text-teal-500">
+                                        <i class="fa-sharp fa-solid fa-eye"></i>
                                         </Link>
                                         <Link :href="route('edit.ukm', { id: data.id })"
-                                            class="text-polynesian-blue hover:text-white border border-polynesian-blue hover:bg-polynesian-blue focus:ring-4 focus:outline-none focus:ring-carolina-blue font-medium rounded text-sm px-5 py-2 text-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                                        </svg>
+                                            class="text-polynesian-blue hover:text-carolina-blue">
+                                        <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                                         </Link>
-                                        <button @click="confirmUkmDeletion"
-                                            class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded text-sm px-5 py-2 text-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                                            </svg>
+                                        <button @click="() => confirmUkmDeletion(data.id)"
+                                            class="text-red-600 hover:text-red-500">
+                                            <i class="fa-solid fa-trash"></i>
                                         </button>
                                     </div>
                                 </td>

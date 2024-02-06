@@ -57,8 +57,9 @@ class UkmController extends Controller
     }
     // hapus data program
     // untuk admin
-    public function delete_program($id)
+    public function delete_program(Request $request)
     {
+        $id = $request->id;
         ukm::findOrFail($id)->delete();
         subprogram::where('id_ukm', $id)->delete();
         return back();
@@ -77,67 +78,82 @@ class UkmController extends Controller
     }
     // view form create subprogram UKM
     // untuk admin
-    public function create_subprogram()
+    public function create_subprogram($id)
     {
-        $data = ukm::all();
-        return Inertia::render("", compact("data"));
+        $data = ukm::findOrFail($id, ['id', 'program']);
+        return Inertia::render('Admin/Ukm/Subprogram/Add', ['data' => $data]);
     }
     // store data subprogram
     // untuk admin
     public function creating_subprogram(Request $request)
     {
-        subprogram::create([
+        $data = subprogram::create([
             "id_ukm" => $request->id_ukm,
             "nama" => $request->nama,
-            "str_penyebut" => $request->str_penyebut,
             "str_pembilang" => $request->str_pembilang,
-            "kali" => $request->kali,
+            "str_penyebut" => $request->str_penyebut ?  $request->str_penyebut : null,
+            "kali" => $request->kali ?  $request->kali : null,
             "target" => $request->target,
             "str_target" => $request->str_target,
             "satuan" => $request->satuan,
             "type" => $request->type,
         ]);
-        return redirect("");
+        return back();
     }
     // view edit_subprogram
     // untuk admin
-    public function edit_subprogram($id)
+    public function edit_subprogram($idukm, $idsub)
     {
-        $id_data = ukm::all();
-        $data = subprogram::find($id);
-        return Inertia::render("", compact("data", "id_data"));
+        $data = ukm::findOrFail($idukm);
+        $datasub = subprogram::find($idsub);
+        return Inertia::render("Admin/Ukm/Subprogram/Edit", ['data' => $data, 'datasub' => $datasub]);
     }
     // update data subprogram
     // untuk admin
-    public function editing_subprogram(Request $request, $id)
+    public function editing_subprogram(Request $request)
     {
+        $id = $request->id;
         $data = subprogram::find($id);
         $data->update($request->all());
-        return redirect("");
+        return back();
     }
     // delete data subprogram
     // untuk admin
-    public function delete_subprogram($id)
+    public function delete_subprogram(Request $request)
     {
+        $id = $request->id;
         subprogram::where("id", $id)->delete();
-        nilai_ukm::where("id_subprogram_ukm", $id)->delete();
         return redirect()->back();
     }
 
     // SEMUA FUNCTION UNTUK NILAI UKM
     // view list nilai nilai ukm sesuai dengan id subprogram
     // untuk puskesmas dan admin
-    public function nilai_ukm($id_program, $idsub)
+    public function nilai_ukm(Request $request, $id_program, $idsub)
     {
         $user_id = auth()->user()->id;
         $role = auth()->user()->role;
         $sub = subprogram::findOrFail($idsub);
+
+        $now = Carbon::now();
+        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : $now->startOfMonth();
+        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : $now->endOfMonth();
+
         if ($role !== "admin") {
             $data = nilai_ukm::where('id_subprogram_ukm', $idsub)
-                ->where('id_users', $user_id)
-                ->get();
-            return Inertia::render("Ukm/Data", ['data' => $data, 'sub' => $sub]);
+                ->where('id_users', $user_id);
+
+            if ($startTime && $endTime) {
+                $data->whereBetween('created_at', [$startTime, $endTime]);
+            } else {
+                $data->whereMonth('created_at', $now->month)
+                    ->whereYear('created_at', $now->year);
+            }
+
+            $result = $data->get();
+            return Inertia::render("Ukm/Data", ['data' => $result, 'sub' => $sub, 'request' => $request]);
         }
+
         // else {
         //     // $id_puskes = User::pluck('id')->all();
         //     $data = nilai_ukm::where('id_nilai_ukm', $idsub)
@@ -168,18 +184,19 @@ class UkmController extends Controller
         $hasil_kali = '';
         if ($data->type ==  1) {
             $hasil_kali = $request->pembilang * $data->kali;
+            $hasil_keseluruhan = $hasil_kali / $request->penyebut;
+            // end login hitungan
+            nilai_ukm::create([
+                "id_subprogram_ukm" => $data->id,
+                "id_users" => $id_user,
+                "pembilang" => $request->pembilang,
+                "penyebut" => $request->penyebut,
+                "kali" => $data->kali,
+                "hasil" => $hasil_keseluruhan,
+                "target" => $request->target,
+            ]);
+        } elseif ($data->type == 2) {
         }
-        $hasil_keseluruhan = $hasil_kali / $request->penyebut;
-        // end login hitungan
-        nilai_ukm::create([
-            "id_subprogram_ukm" => $data->id,
-            "id_users" => $id_user,
-            "pembilang" => $request->pembilang,
-            "penyebut" => $request->penyebut,
-            "kali" => $data->kali,
-            "hasil" => $hasil_keseluruhan,
-            "target" => $request->target,
-        ]);
 
         return back();
     }

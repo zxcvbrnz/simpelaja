@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId("id_ukm");
             $table->string("nama");
             $table->string("str_pembilang");
-            $table->string("str_penyebut");
-            $table->integer("kali");
+            $table->string("str_penyebut")->nullable();
+            $table->integer("kali")->nullable();
             $table->integer("target");
             $table->string("str_target");
             $table->string("satuan");
