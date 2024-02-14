@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId("id_users");
-            $table->string("Kepala_puskesmas");
-            $table->string("alamat_puskesmas");
-            $table->integer("jumlah_pustu");
-            $table->integer("jumlah_poskesdes");
-            $table->integer("jumlah_ukbm");
+            $table->string("Kepala_puskesmas")->nullable();
+            $table->string("alamat_puskesmas")->nullable();
+            $table->integer("jumlah_pustu")->nullable();
+            $table->integer("jumlah_poskesdes")->nullable();
+            $table->integer("jumlah_ukbm")->nullable();
             $table->timestamps();
         });
     }

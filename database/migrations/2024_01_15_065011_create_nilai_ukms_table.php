@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignid("id_subprogram_ukm");
             $table->foreignid("id_users");
-            $table->integer("penyebut");
             $table->integer("pembilang");
+            $table->integer("penyebut")->nullable();
             $table->integer("kali");
             $table->integer("hasil");
             $table->integer("target");

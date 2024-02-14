@@ -5,13 +5,13 @@ import Swal from 'sweetalert2';
 
 const data = usePage().props.data;
 
-const confirmUkmDeletion = (id) => {
+const confirmUkmDeletion = (id, name) => {
     const form = useForm({
         id: id,
     });
     Swal.fire({
         title: "Apakah kamu yakin?",
-        text: "Kamu akan menghapus program ini!",
+        text: `Kamu akan menghapus program ${name} ini!`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -113,7 +113,7 @@ $(document).ready(function () {
                                             class="text-polynesian-blue hover:text-carolina-blue">
                                         <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                                         </Link>
-                                        <button @click="() => confirmUkmDeletion(data.id)"
+                                        <button @click="() => confirmUkmDeletion(data.id, data.program)"
                                             class="text-red-600 hover:text-red-500">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>

@@ -132,35 +132,12 @@ class UkmController extends Controller
     public function nilai_ukm(Request $request, $id_program, $idsub)
     {
         $user_id = auth()->user()->id;
-        $role = auth()->user()->role;
         $sub = subprogram::findOrFail($idsub);
+        $program = ukm::findOrFail($id_program, ['id', 'program']);
 
-        $now = Carbon::now();
-        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : $now->startOfMonth();
-        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : $now->endOfMonth();
-
-        if ($role !== "admin") {
-            $data = nilai_ukm::where('id_subprogram_ukm', $idsub)
-                ->where('id_users', $user_id);
-
-            if ($startTime && $endTime) {
-                $data->whereBetween('created_at', [$startTime, $endTime]);
-            } else {
-                $data->whereMonth('created_at', $now->month)
-                    ->whereYear('created_at', $now->year);
-            }
-
-            $result = $data->get();
-            return Inertia::render("Ukm/Data", ['data' => $result, 'sub' => $sub, 'request' => $request]);
-        }
-
-        // else {
-        //     // $id_puskes = User::pluck('id')->all();
-        //     $data = nilai_ukm::where('id_nilai_ukm', $idsub)
-        //         ->where('user_id', $idpuskes)
-        //         ->get();
-        //     return Inertia::render("", compact("data"));
-        // }
+        $data = nilai_ukm::where('id_subprogram_ukm', $idsub)
+            ->where('id_users', $user_id)->get();
+        return Inertia::render("Ukm/Data", ['program' => $program, 'data' => $data, 'sub' => $sub]);
     }
 
     public function create_nilai()
@@ -181,22 +158,23 @@ class UkmController extends Controller
             return back()->with('fail', 'Data Bulan ' . Carbon::now()->format('F') . ' Sudah Di Input');
         }
         //start logic hitungan.
-        $hasil_kali = '';
+        $hasil_keseluruhan = '';
         if ($data->type ==  1) {
             $hasil_kali = $request->pembilang * $data->kali;
             $hasil_keseluruhan = $hasil_kali / $request->penyebut;
             // end login hitungan
-            nilai_ukm::create([
-                "id_subprogram_ukm" => $data->id,
-                "id_users" => $id_user,
-                "pembilang" => $request->pembilang,
-                "penyebut" => $request->penyebut,
-                "kali" => $data->kali,
-                "hasil" => $hasil_keseluruhan,
-                "target" => $request->target,
-            ]);
         } elseif ($data->type == 2) {
+            $hasil_keseluruhan = $request->pembilang;
         }
+        nilai_ukm::create([
+            "id_subprogram_ukm" => $data->id,
+            "id_users" => $id_user,
+            "pembilang" => $request->pembilang,
+            "penyebut" => $request->penyebut,
+            "kali" => $data->kali,
+            "hasil" => $hasil_keseluruhan,
+            "target" => $request->target,
+        ]);
 
         return back();
     }

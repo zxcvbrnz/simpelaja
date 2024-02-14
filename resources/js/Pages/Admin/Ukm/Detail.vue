@@ -86,7 +86,7 @@ $(document).ready(function () {
                             <tr>
                                 <th data-priority="1" class="text-start">Puskesmas</th>
                                 <th data-priority="2" class="text-start">Dilaporkan Pada</th>
-                                <th data-priority="3" class="text-start">Capaian Perbulan</th>
+                                <th data-priority="3" class="text-start">Capaian</th>
                                 <th data-priority="4" class="text-start">Target</th>
                                 <th data-priority="5" class="text-start">Options</th>
                             </tr>
@@ -100,7 +100,9 @@ $(document).ready(function () {
                                 <td></td>
                                 <td>{{ sub.target + ' ' + sub.str_target }}</td>
                                 <td class="flex items-center">
-                                    <Link class="text-teal-600 hover:text-teal-500">
+                                    <Link
+                                        :href="route('program.detail.admin.user', { id_program: $page.props.program.id, id_sub: $page.props.sub.id, id_user: user.id })"
+                                        class="text-teal-600 hover:text-teal-500">
                                     <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>
                                 </td>

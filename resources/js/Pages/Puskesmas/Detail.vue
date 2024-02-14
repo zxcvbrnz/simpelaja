@@ -4,7 +4,14 @@ import { Head, Link, usePage } from '@inertiajs/vue3';
 import InputLabel from '@/Components/InputLabel.vue';
 
 const user = usePage().props.userpuskesmas;
-const profil = usePage().props.profil;
+const profildummy = {
+    Kepala_puskesmas: '-',
+    alamat_puskesmas: '-',
+    jumlah_pustu: '-',
+    jumlah_poskesdes: '-',
+    jumlah_ukbm: '-',
+};
+const profil = usePage().props.profil ? usePage().props.profil : profildummy;
 const totalDesa = usePage().props.totalDesa;
 const totalPenduduk = usePage().props.totalPenduduk;
 const sdm = usePage().props.sdm;
@@ -65,12 +72,6 @@ const sdm = usePage().props.sdm;
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
                     <div class="text-xl text-slate-600 mb-6">{{ user.name }}</div>
                     <div class="flex items-center space-x-6">
-                        <!-- <div>
-                            <InputLabel value="Kepala Puskesmas" />
-                            <TextInput type="text" class="mt-1 block w-full"
-                                autocomplete="name" readonly />
-                            <InputError :message="form.errors.name" class="mt-2" />
-                        </div> -->
                         <table>
                             <tr class="mb-6">
                                 <td>

@@ -4,6 +4,7 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 const form = useForm({
     name: '',
@@ -14,7 +15,14 @@ const form = useForm({
 
 const submit = () => {
     form.post(route('register'), {
-        onFinish: () => form.reset('password', 'password_confirmation'),
+        onSuccess: () => {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Telah Menambahkan Data Baru',
+                icon: 'success',
+            });
+            form.reset();
+        },
     });
 };
 </script>
@@ -109,6 +117,10 @@ const submit = () => {
                                 type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                                 Register
                             </Button>
+                            <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
+                                leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
+                                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Created.</p>
+                            </Transition>
                         </div>
                     </form>
                 </div>

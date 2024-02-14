@@ -71,6 +71,11 @@ import SideLink from './SideLink.vue';
                         || route().current('program.detail')
                         || route().current('program.detail.data')
                         || route().current('program.detail.admin')
+                        || route().current('program.detail.admin.user')
+                        || route().current('add.ukms')
+                        || route().current('edit.ukm')
+                        || route().current('add.subprogram')
+                        || route().current('edit.subprogram')
                         ">
                         <span class="ms-10">UKM</span>
                     </SideLink>

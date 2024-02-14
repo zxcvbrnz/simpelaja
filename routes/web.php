@@ -22,12 +22,7 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect('/login');
 });
 
 Route::get('/dashboard', function () {
@@ -51,6 +46,7 @@ Route::middleware('auth')->group(function () {
         Route::post('register', [RegisteredUserController::class, 'store'])->name('register');
 
         Route::get('/user-puskesmas', [AdminController::class, 'puskesmas'])->name('data.puskesmas');
+        Route::delete('/user-puskesmas', [AdminController::class, 'delete_puskesmas'])->name('delete.puskesmas');
         Route::get('/user-puskesmas/tambah-user', [AdminController::class, 'add_puskesmas'])->name('add.puskesmas');
 
         Route::get('/user-puskesmas/{id}/detail', [AdminController::class, 'detail_puskesmas'])->name('detail.puskesmas');
@@ -70,12 +66,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/indikator/ukm/{id}/program', [UkmController::class, 'delete_subprogram'])->name('delete.subprogram');
 
         Route::get('/indikator/ukm/{id_program}/program/{id_sub}/detail/', [AdminController::class, 'detail_sub_ukm'])->name('program.detail.admin');
+        Route::get('/indikator/ukm/{id_program}/program/{id_sub}/detail/{id_user}', [AdminController::class, 'nilai_ukm'])->name('program.detail.admin.user');
 
         // ========= UKPP ==========
         Route::get('/indikator/ukpp/{id_pelayanan}/pelayanan/{id_sub}/detail/', [AdminController::class, 'detail_sub_ukpp'])->name('pelayanan.detail.admin');
     });
     Route::middleware('puskesmas')->group(function () {
         Route::get('/detail-puskesmas', [PuskesmasController::class, 'index'])->name('detail.profil');
+        Route::patch('/detail-puskesmas', [PuskesmasController::class, 'update_profil'])->name('update.profil');
 
         //=========== UKM ============
         Route::post('/indikator/ukm/program/{id_sub}/data', [UkmController::class, 'creating_nilai'])->name('program.data.add');

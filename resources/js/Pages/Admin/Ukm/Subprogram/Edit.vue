@@ -176,8 +176,8 @@ const submitEdit = () => {
                                 </div>
                             </div>
                         </div>
-                        <div class="flex pt-4 mb-4">
-                            <button type="submit"
+                        <div class="flex items-center gap-4 pt-4">
+                            <button type="submit" :disabled="form.processing"
                                 class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">
                                 <span>Submit</span>
                             </button>

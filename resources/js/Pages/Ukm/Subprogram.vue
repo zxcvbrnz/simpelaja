@@ -1,19 +1,26 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import TextInput from '@/Components/TextInput.vue';
 import Swal from 'sweetalert2';
+import Chart from 'chart.js/auto';
 
 const data = usePage().props.data;
 const user = usePage().props.auth.user;
 const name = usePage().props.name;
 
-const confirmDeletion = (id) => {
+const forms = useForm({
+    start_time: '',
+    end_time: '',
+});
+
+const confirmDeletion = (id, name) => {
     const form = useForm({
         id: id,
     });
     Swal.fire({
         title: "Apakah kamu yakin?",
-        text: "Kamu akan menghapus program ini!",
+        text: `Kamu akan menghapus program ${name} ini!`,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -37,12 +44,32 @@ const confirmDeletion = (id) => {
 };
 
 $(document).ready(function () {
-
     var table = $('#example').DataTable({
         responsive: true
-    })
-        .columns.adjust()
-        .responsive.recalc();
+    }).columns.adjust().responsive.recalc();
+
+    const ctx = $('#myChart');
+
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: data.map(item => item.nama),
+            datasets: [{
+                label: 'Capaian',
+                data: data.map(item => item.id),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
 });
 </script>
 
@@ -135,7 +162,7 @@ $(document).ready(function () {
                                             class="text-polynesian-blue hover:text-carolina-blue">
                                         <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                                         </Link>
-                                        <button @click="() => confirmDeletion(data.id)"
+                                        <button @click="() => confirmDeletion(data.id, data.nama)"
                                             class="text-red-600 hover:text-red-500">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
@@ -144,6 +171,24 @@ $(document).ready(function () {
                             </tr>
                         </tbody>
                     </table>
+                    <form class="flex my-6 space-x-2 pt-10">
+                        <TextInput id="program" v-model="forms.start_time" type="date" class="mt-1 block w-full"
+                            autocomplete="program" required />
+                        <TextInput id="program" v-model="forms.end_time" type="date" class="mt-1 block w-full"
+                            autocomplete="program" required />
+                        <button
+                            class="text-sm text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
+                            :disabled="forms.processing">Submit</button>
+                    </form>
+                    <Link
+                        class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">
+                    Cetak</Link>
+                    <div class="m-auto">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <div class="m-auto">
+                        <canvas id="barChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>

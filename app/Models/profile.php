@@ -9,8 +9,8 @@ class profile extends Model
 {
     use HasFactory;
     protected $table = "profiles";
-    protected $primaryKey = 'id_users';
-    // protected $guarded = ["id"];
+    // protected $primaryKey = 'id_users';
+    protected $guarded = ["id"];
 
     public function user()
     {

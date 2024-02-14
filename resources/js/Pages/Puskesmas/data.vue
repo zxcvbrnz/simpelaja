@@ -1,8 +1,38 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import Swal from 'sweetalert2';
 
 const user = usePage().props.userpuskesmas;
+
+const confirmPuskesDeletion = (id, name) => {
+    const form = useForm({
+        id: id,
+    });
+    Swal.fire({
+        title: "Apakah kamu yakin?",
+        text: `Kamu akan menghapus User ${name}`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, Hapus!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.delete(route('delete.puskesmas'), {
+                onSuccess: () => {
+                    Swal.fire({
+                        title: "Dihapus!",
+                        text: "Program telah dihapus.",
+                        icon: "success"
+                    }).then((result) => {
+                        location.reload();
+                    });
+                }
+            });
+        }
+    });
+};
 
 $(document).ready(function () {
 
@@ -90,23 +120,14 @@ $(document).ready(function () {
                             <tr v-for="(user, index) in user" :key="index">
                                 <td>{{ user.name }}</td>
                                 <td>{{ user.email }}</td>
-                                <td class="flex justify-center space-x-2">
+                                <td class="flex justify-center space-x-4 items-center">
                                     <Link :href="route('detail.puskesmas', { id: user.id })"
-                                        class="text-teal-600 hover:text-white border border-teal-600 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-carolina-blue font-medium rounded text-sm px-5 py-2 text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                        <path
-                                            d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                    </svg>
+                                        class="text-teal-600 hover:text-teal-500">
+                                    <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>
-                                    <button
-                                        class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded text-sm px-5 py-2 text-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                                        </svg>
+                                    <button @click="() => confirmPuskesDeletion(user.id, user.name)"
+                                        class="text-red-600 hover:text-red-500">
+                                        <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </td>
                             </tr>
