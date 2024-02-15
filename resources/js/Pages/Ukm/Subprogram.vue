@@ -2,46 +2,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
-import Swal from 'sweetalert2';
 import Chart from 'chart.js/auto';
 
-const data = usePage().props.data;
-const user = usePage().props.auth.user;
-const name = usePage().props.name;
+const { data, auth, name, capaian, grapik } = usePage().props;
 
-const forms = useForm({
+const form = useForm({
     start_time: '',
     end_time: '',
 });
-
-const confirmDeletion = (id, name) => {
-    const form = useForm({
-        id: id,
-    });
-    Swal.fire({
-        title: "Apakah kamu yakin?",
-        text: `Kamu akan menghapus program ${name} ini!`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Ya, Hapus!"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            form.delete(route('delete.subprogram', { id: name.id }), {
-                onSuccess: () => {
-                    Swal.fire({
-                        title: "Dihapus!",
-                        text: "Program telah dihapus.",
-                        icon: "success"
-                    }).then((result) => {
-                        location.reload();
-                    });
-                }
-            });
-        }
-    });
-};
 
 $(document).ready(function () {
     var table = $('#example').DataTable({
@@ -56,7 +24,7 @@ $(document).ready(function () {
             labels: data.map(item => item.nama),
             datasets: [{
                 label: 'Capaian',
-                data: data.map(item => item.id),
+                data: data.map(item => grapik[item.id] || 0),
                 borderWidth: 1
             }]
         },
@@ -80,7 +48,7 @@ $(document).ready(function () {
         <div class="py-4 font-sans">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <h2 class="font-semibold text-xl text-slate-500 leading-tight mb-4">
-                    {{ $page.props.name.program }}
+                    {{ name.program }}
                 </h2>
                 <nav class="flex bg-white px-4 py-6 shadow-md" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -125,17 +93,6 @@ $(document).ready(function () {
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <div v-if="user.role === 'admin'" class="flex justify-end mb-4">
-                        <Link :href="route('add.subprogram', { id: name.id })"
-                            class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-bookmark-plus-fill" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m6.5-11a.5.5 0 0 0-1 0V6H6a.5.5 0 0 0 0 1h1.5v1.5a.5.5 0 0 0 1 0V7H10a.5.5 0 0 0 0-1H8.5z" />
-                        </svg>
-                        <span>Tambah</span>
-                        </Link>
-                    </div>
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
@@ -143,42 +100,56 @@ $(document).ready(function () {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(data, index) in data" :key="index">
+                            <tr v-for="(data, index) in  data " :key="index">
                                 <td class="flex justify-between">
-                                    <span><span class="mr-5 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
-                                        index + 1 }}</span>{{ data.nama }}</span>
-                                    <Link v-if="user.role === 'puskesmas'"
-                                        :href="route('program.detail.data', { id_program: name.id, id_sub: data.id })"
+                                    <div class="flex items-center">
+                                        <span class="mr-1 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
+                                            index + 1 }}
+                                        </span>
+                                        <div class="mr-4"
+                                            v-for="(capaian, index) in capaian.filter(item => item.id_subprogram_ukm == data.id)"
+                                            :key="index">
+                                            {{ capaian.length }}
+                                            <div v-if="capaian.id_subprogram_ukm == data.id">
+                                                <div
+                                                    class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 rounded-lg dark:bg-green-800 dark:text-green-200">
+                                                    <svg class="w-5 h-5" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div v-if="capaian.length == 0">
+                                                <div
+                                                    class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 rounded-lg dark:bg-orange-700 dark:text-orange-200">
+                                                    <svg class="w-5 h-5" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{ data.nama }}
+                                    </div>
+                                    <Link :href="route('program.detail.data', { id_program: name.id, id_sub: data.id })"
                                         class="text-teal-600 hover:text-teal-500">
                                     <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>
-                                    <div v-if="user.role === 'admin'" class="flex items-center space-x-4">
-                                        <Link
-                                            :href="route('program.detail.admin', { id_program: name.id, id_sub: data.id })"
-                                            class="text-teal-600 hover:text-teal-500">
-                                        <i class="fa-sharp fa-solid fa-eye"></i>
-                                        </Link>
-                                        <Link :href="route('edit.subprogram', { id: name.id, id_sub: data.id })"
-                                            class="text-polynesian-blue hover:text-carolina-blue">
-                                        <i class="fa-sharp fa-solid fa-pen-to-square"></i>
-                                        </Link>
-                                        <button @click="() => confirmDeletion(data.id, data.nama)"
-                                            class="text-red-600 hover:text-red-500">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                    <form class="flex my-6 space-x-2 pt-10">
-                        <TextInput id="program" v-model="forms.start_time" type="date" class="mt-1 block w-full"
-                            autocomplete="program" required />
-                        <TextInput id="program" v-model="forms.end_time" type="date" class="mt-1 block w-full"
-                            autocomplete="program" required />
+                    <form @submit.prevent="form.post(route('filter.subprogram', { id: name.id }))"
+                        class="flex my-6 space-x-2 pt-10">
+                        <TextInput v-model="form.start_time" type="date" class="mt-1 block w-full" required />
+                        <TextInput v-model="form.end_time" type="date" class="mt-1 block w-full" required />
                         <button
                             class="text-sm text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
-                            :disabled="forms.processing">Submit</button>
+                            :disabled="form.processing">Filter</button>
                     </form>
                     <Link
                         class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">

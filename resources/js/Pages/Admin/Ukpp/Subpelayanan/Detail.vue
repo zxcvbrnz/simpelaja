@@ -1,27 +1,19 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import TextInput from '@/Components/TextInput.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import InputError from '@/Components/InputError.vue';
-import Swal from 'sweetalert2';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 
-const form = useForm({
-    pelayanan: '',
+const data = usePage().props.data;
+const user = usePage().props.user;
+const sub = usePage().props.sub;
+
+$(document).ready(function () {
+
+    var table = $('#example').DataTable({
+        responsive: true
+    })
+        .columns.adjust()
+        .responsive.recalc();
 });
-
-const submitCreate = () => {
-    form.post(route('add.ukpp'), {
-        onSuccess: () => {
-            Swal.fire({
-                title: 'Berhasil!',
-                text: 'Telah Menambahkan Data Baru',
-                icon: 'success',
-            });
-            form.reset();
-        },
-    });
-}
 </script>
 
 <template>
@@ -60,6 +52,19 @@ const submitCreate = () => {
                                 Upaya Kesehatan Perseorangan dan Penunjang</Link>
                             </div>
                         </li>
+                        <li>
+                            <div class="flex items-center">
+                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <Link :href="route('pelayanan.detail', { id: $page.props.pelayanan.id })"
+                                    class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">
+                                {{ $page.props.pelayanan.pelayanan }}</Link>
+                            </div>
+                        </li>
                         <li aria-current="page">
                             <div class="flex items-center">
                                 <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
@@ -69,35 +74,41 @@ const submitCreate = () => {
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    Tambah
+                                    {{ $page.props.sub.subpelayanan }}
                                 </span>
                             </div>
                         </li>
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <form @submit.prevent="submitCreate">
-                        <div class="w-full md:w-1/2 space-y-3 pe-4">
-                            <div>
-                                <InputLabel for="program" value="Nama Program" />
-
-                                <TextInput id="program" v-model="form.pelayanan" type="text" class="mt-1 block w-full"
-                                    autocomplete="program" />
-
-                                <InputError :message="form.errors.pelayanan" class="mt-2" />
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4 pt-4">
-                            <button
-                                class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
-                                :disabled="form.processing">Submit</button>
-
-                            <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
-                                leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
-                                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Created.</p>
-                            </Transition>
-                        </div>
-                    </form>
+                    <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                        <thead>
+                            <tr>
+                                <th data-priority="1" class="text-start">Puskesmas</th>
+                                <th data-priority="2" class="text-start">Dilaporkan Pada</th>
+                                <th data-priority="3" class="text-start">Capaian</th>
+                                <th data-priority="4" class="text-start">Target</th>
+                                <th data-priority="5" class="text-start">Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(user, index) in user" :key="index">
+                                <td>
+                                    <span><span class="mr-5 font-bold">{{ index + 1 }}</span>{{ user.name }}</span>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td>{{ sub.target + ' ' + sub.str_target }}</td>
+                                <td class="flex items-center">
+                                    <Link
+                                        :href="route('pelayanan.detail.admin.user', { id_program: $page.props.program.id, id_sub: $page.props.sub.id, id_user: user.id })"
+                                        class="text-teal-600 hover:text-teal-500">
+                                    <i class="fa-sharp fa-solid fa-eye"></i>
+                                    </Link>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\manajemen;
 use App\Models\nilai_ukm;
 use Illuminate\Http\Request;
 use App\Models\ukm;
@@ -70,11 +69,50 @@ class UkmController extends Controller
     // view list subprogram UKM
     // untuk admin dan 
     // puskesmas hanya bisa lihat list
-    public function subprogram($id)
+    public function subprogram(Request $request, $id)
     {
+        // apakah ada request filter
+        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : null;
+        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : null;
+
+        // Program
         $name = ukm::findOrFail($id, ['id', 'program']);
         $data = subprogram::where('id_ukm', $id)->get();
-        return Inertia::render("Ukm/Subprogram", ['data' => $data, 'name' => $name]);
+
+        // Mencari data capaian berdasarka User
+        $id_user = $request->user()->id;
+        $data_capaian = nilai_ukm::where('id_users', $id_user);
+
+        // data capaian yang dibuat oleh user terkait dengan id_ukm
+        $now = Carbon::now();
+        $capaian = $data_capaian
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year);
+
+        $data_nilai = [];
+        if ($startTime && $endTime) {
+            $data_nilai = $data_capaian->whereBetween('created_at', [$startTime, $endTime])->get();
+        } else {
+            $data_nilai = $capaian->get();
+        }
+
+        $grapik = [];
+
+        // Calculate average hasil for each subprogram
+        foreach ($data as $d) {
+            $datanilai = $data_nilai->where('id_subprogram_ukm', $d->id);
+            $total = $datanilai->sum('hasil');
+            if ($datanilai->count() > 0) {
+                $average = $total / $datanilai->count();
+                $grapik[$d->id] = $average; // Store average value for each subprogram
+            } else {
+                $grapik[$d->id] = 0; // If no data found, set average to 0
+            }
+        }
+        $capaian = $capaian->get();
+
+        // return dd($grapik);
+        return Inertia::render("Ukm/Subprogram", ['data' => $data, 'name' => $name, 'capaian' => $capaian, 'grapik' => $grapik]);
     }
     // view form create subprogram UKM
     // untuk admin
@@ -110,7 +148,7 @@ class UkmController extends Controller
     }
     // update data subprogram
     // untuk admin
-    public function editing_subprogram(Request $request)
+    public function update_subprogram(Request $request)
     {
         $id = $request->id;
         $data = subprogram::find($id);

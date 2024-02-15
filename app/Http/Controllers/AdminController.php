@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\desa;
 use App\Models\nilai_ukm;
+use App\Models\nilai_pelayanan;
+use App\Models\pelayanan;
 use App\Models\profile;
 use App\Models\subprogram;
 use App\Models\ukm;
+use App\Models\ukpp;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -72,6 +75,13 @@ class AdminController extends Controller
         return back();
     }
 
+    public function subprogram($id)
+    {
+        $name = ukm::findOrFail($id, ['id', 'program']);
+        $data = subprogram::where('id_ukm', $id)->get();
+        return Inertia::render("Admin/Ukm/Subprogram/index", ['data' => $data, 'name' => $name]);
+    }
+
     public function detail_sub_ukm($id_program, $idsub)
     {
         $user = User::where('role', 'puskesmas')->get(['id', 'name']);
@@ -87,7 +97,7 @@ class AdminController extends Controller
             ->whereYear('created_at', $now->year)
             ->first();
 
-        return Inertia::render('Admin/Ukm/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'program' => $name_program]);
+        return Inertia::render('Admin/Ukm/Subprogram/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'program' => $name_program]);
     }
 
     public function nilai_ukm($id_program, $idsub, $iduser)
@@ -99,5 +109,35 @@ class AdminController extends Controller
         $data = nilai_ukm::where('id_subprogram_ukm', $idsub)
             ->where('id_users', $user->id)->get();
         return Inertia::render("Ukm/Data", ['program' => $program, 'data' => $data, 'sub' => $sub, 'username' => $user->name]);
+    }
+
+
+    public function detail_sub_ukpp($id_pelayanan, $idsub)
+    {
+        $user = User::where('role', 'puskesmas')->get(['id', 'name']);
+
+        $name_pelayanan = ukpp::findOrFail($id_pelayanan, ['id', 'pelayanan']);
+
+        $now = Carbon::now();
+
+        $sub = pelayanan::findOrFail($idsub, ['id', 'subpelayanan', 'target', 'str_target']);
+
+        $data_ni = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year)
+            ->first();
+
+        return Inertia::render('Admin/Ukpp/Subpelayanan/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'pelayanan' => $name_pelayanan]);
+    }
+
+    public function nilai_ukpp($id_pelayanan, $idsub, $iduser)
+    {
+        $user = User::findOrFail($iduser, ['id', 'name']);
+        $sub = pelayanan::findOrFail($idsub);
+        $pelayanan = ukpp::findOrFail($id_pelayanan, ['id', 'pelayanan']);
+
+        $data = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
+            ->where('id_users', $user->id)->get();
+        return Inertia::render("Ukpp/Data", ['pelayanan' => $pelayanan, 'data' => $data, 'sub' => $sub, 'username' => $user->name]);
     }
 }

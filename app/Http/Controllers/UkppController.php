@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\nilai_pelayanan;
-use App\Models\pelayanan;
-use App\Models\ukpp;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\ukpp;
+use App\Models\pelayanan;
+use App\Models\User;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,25 +22,25 @@ class UkppController extends Controller
     }
     public function create_pelayanan()
     {
-        return Inertia::render("");
+        return Inertia::render("Admin/Ukpp/Add");
     }
     public function creating_pelayanan(Request $request)
     {
         ukpp::create([
             "pelayanan" => $request->pelayanan,
         ]);
-        return redirect("");
+        return back();
     }
     public function edit_pelayanan($id)
     {
         $data = ukpp::find($id);
-        return Inertia::render("", compact("data"));
+        return Inertia::render("Admin/Ukpp/Edit'", ['data' => $data]);
     }
     public function update_pelayanan(Request $request, $id)
     {
         $data = ukpp::find($id);
         $data->update($request->all());
-        return redirect("");
+        return back();
     }
     public function delete_pelayanan($id)
     {
@@ -49,16 +50,53 @@ class UkppController extends Controller
     }
 
     // ======== SEMUA FUNCTION SUBPELAYANAN ==========
-    public function subpelayanan($id)
+    public function subpelayanan(Request $request, $id)
     {
+        // apakah ada request filter
+        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : null;
+        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : null;
+
         $name = ukpp::findOrFail($id, ['id', 'pelayanan']);
-        $data = pelayanan::where("id_ukpp", $id)->get(["id", "subpelayanan"]);
-        return Inertia::render("Ukpp/SubPelayanan", ["data" => $data, 'name' => $name]);
+        $data = pelayanan::where("id_ukpp", $id)->get();
+        // $data = pelayanan::where("id_ukpp", $id)->get(["id", "subpelayanan"]);
+
+        // Mencari data capaian berdasarka User
+        $id_user = $request->user()->id;
+        $data_capaian = nilai_pelayanan::where('id_users', $id_user);
+
+        // data capaian yang dibuat oleh user terkait dengan id_ukpp
+        $now = Carbon::now();
+        $capaian = $data_capaian
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year);
+
+        if ($startTime && $endTime) {
+            $data_nilai = $data_capaian->whereBetween('created_at', [$startTime, $endTime])->get();
+        } else {
+            $data_nilai = $capaian->get();
+        }
+
+        $grapik = [];
+
+        // Calculate average hasil for each subprogram
+        foreach ($data as $d) {
+            $datanilai = $data_nilai->where('id_subprogram', $d->id);
+            if ($datanilai->count() > 0) {
+                $total = $datanilai->sum('hasil');
+                $average = $total / $datanilai->count();
+                $grapik[$d->id] = $average; // Store average value for each subprogram
+            } else {
+                $grapik[$d->id] = 0; // If no data found, set average to 0
+            }
+        }
+        $capaian = $capaian->get();
+
+        return Inertia::render("Ukpp/Subpelayanan", ['data' => $data, 'name' => $name, 'capaian' => $capaian, 'grapik' => $grapik]);
     }
-    public function create_subpelayanan()
+    public function create_subpelayanan($id)
     {
-        $data = ukpp::all();
-        return Inertia("", compact("data"));
+        $data =  ukpp::findOrFail($id, ['id', 'pelayanan']);
+        return Inertia("Admin/Ukpp/Subpelayanan/Add", compact("data"));
     }
     public function creating_subpelayanan(Request $request)
     {
@@ -73,19 +111,20 @@ class UkppController extends Controller
             "satuan" => $request->satuan,
             "type" => $request->type,
         ]);
-        return redirect("");
+        return back();
     }
-    public function edit_subpelayanan($id)
+    public function edit_subpelayanan($idukpp, $idsub)
     {
-        $id_data = ukpp::all();
-        $data = pelayanan::find($id);
-        return Inertia("", compact("id_data", "data"));
+        $data = ukpp::findOrFail($idukpp);
+        $datasub = pelayanan::find($idsub);
+        return Inertia::render("Admin/Ukpp/Subpelayanan/Edit", ['data' => $data, 'datasub' => $datasub]);
     }
-    public function update_subpelayanan(Request $request, $id)
+    public function update_subpelayanan(Request $request)
     {
+        $id = $request->id;
         $data = pelayanan::find($id);
         $data->update($request->all());
-        return redirect("");
+        return back();
     }
     public function delete_subpelayanan($id)
     {

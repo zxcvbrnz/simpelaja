@@ -85,6 +85,11 @@ import SideLink from './SideLink.vue';
                         || route().current('pelayanan.detail')
                         || route().current('pelayanan.detail.data')
                         || route().current('pelayanan.detail.admin')
+                        || route().current('pelayanan.detail.admin.user')
+                        || route().current('add.ukpps')
+                        || route().current('edit.ukpp')
+                        || route().current('add.subpelayanan')
+                        || route().current('edit.subpelayanan')
                         ">
                         <span class="ms-10">UKPP</span>
                     </SideLink>

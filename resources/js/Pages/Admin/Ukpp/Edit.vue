@@ -1,24 +1,25 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import Swal from 'sweetalert2';
 
+const data = usePage().props.data;
+
 const form = useForm({
-    pelayanan: '',
+    pelayanan: data.pelayanan,
 });
 
-const submitCreate = () => {
-    form.post(route('add.ukpp'), {
+const submitEdit = () => {
+    form.patch(route('update.ukpp', { id: data.id }), {
         onSuccess: () => {
             Swal.fire({
                 title: 'Berhasil!',
-                text: 'Telah Menambahkan Data Baru',
+                text: 'Telah Mengubah Data',
                 icon: 'success',
             });
-            form.reset();
         },
     });
 }
@@ -31,7 +32,7 @@ const submitCreate = () => {
         <div class="py-4 font-sans">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <h2 class="font-semibold text-xl text-slate-500 leading-tight mb-4">
-                    Indikator Upaya Kesehatan Perseorangan dan Penunjang (UKPP)
+                    Edit {{ data.pelayanan }}
                 </h2>
                 <nav class="flex bg-white px-4 py-6 shadow-md" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -69,17 +70,17 @@ const submitCreate = () => {
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    Tambah
+                                    Edit {{ data.pelayanan }}
                                 </span>
                             </div>
                         </li>
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <form @submit.prevent="submitCreate">
+                    <form @submit.prevent="submitEdit">
                         <div class="w-full md:w-1/2 space-y-3 pe-4">
                             <div>
-                                <InputLabel for="program" value="Nama Program" />
+                                <InputLabel for="program" value="Nama pelayanan" />
 
                                 <TextInput id="program" v-model="form.pelayanan" type="text" class="mt-1 block w-full"
                                     autocomplete="program" />
@@ -90,11 +91,11 @@ const submitCreate = () => {
                         <div class="flex items-center gap-4 pt-4">
                             <button
                                 class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
-                                :disabled="form.processing">Submit</button>
+                                :disabled="form.processing">Update</button>
 
                             <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
                                 leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
-                                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Created.</p>
+                                <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
                             </Transition>
                         </div>
                     </form>
