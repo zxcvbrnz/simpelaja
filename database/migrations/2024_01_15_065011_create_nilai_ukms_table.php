@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignid("id_users");
             $table->integer("pembilang");
             $table->integer("penyebut")->nullable();
-            $table->integer("kali");
+            $table->integer("kali")->nullable();
             $table->integer("hasil");
             $table->integer("target");
             $table->timestamps();

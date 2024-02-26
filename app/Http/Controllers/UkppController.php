@@ -34,7 +34,7 @@ class UkppController extends Controller
     public function edit_pelayanan($id)
     {
         $data = ukpp::find($id);
-        return Inertia::render("Admin/Ukpp/Edit'", ['data' => $data]);
+        return Inertia::render("Admin/Ukpp/Edit", ['data' => $data]);
     }
     public function update_pelayanan(Request $request, $id)
     {
@@ -42,8 +42,9 @@ class UkppController extends Controller
         $data->update($request->all());
         return back();
     }
-    public function delete_pelayanan($id)
+    public function delete_pelayanan(Request $request)
     {
+        $id = $request->id;
         ukpp::where('id', $id)->delete();
         pelayanan::where('id_ukpp', $id)->delete();
         return redirect()->back();
@@ -80,7 +81,7 @@ class UkppController extends Controller
 
         // Calculate average hasil for each subprogram
         foreach ($data as $d) {
-            $datanilai = $data_nilai->where('id_subprogram', $d->id);
+            $datanilai = $data_nilai->where('id_subpelayanan_ukpp', $d->id);
             if ($datanilai->count() > 0) {
                 $total = $datanilai->sum('hasil');
                 $average = $total / $datanilai->count();
@@ -91,7 +92,7 @@ class UkppController extends Controller
         }
         $capaian = $capaian->get();
 
-        return Inertia::render("Ukpp/Subpelayanan", ['data' => $data, 'name' => $name, 'capaian' => $capaian, 'grapik' => $grapik]);
+        return Inertia::render("Ukpp/SubPelayanan", ['data' => $data, 'name' => $name, 'capaian' => $capaian, 'grapik' => $grapik]);
     }
     public function create_subpelayanan($id)
     {
@@ -126,38 +127,24 @@ class UkppController extends Controller
         $data->update($request->all());
         return back();
     }
-    public function delete_subpelayanan($id)
+    public function delete_subpelayanan(Request $request)
     {
+        $id = $request->id;
         pelayanan::where("id", $id)->delete();
-        nilai_pelayanan::where("id_subpelayanan_ukpp", $id)->delete();
-        return redirect()->back();
+        return back();
     }
     // ========== SEMUA FUNCTION NILAI_PELAYANAN_UKPP ==========
     public function nilai_pelayanan(Request $request, $id_pelayanan, $idsub)
     {
         $user_id = auth()->user()->id;
-        $role = auth()->user()->role;
         $sub = pelayanan::findOrFail($idsub);
+        $pelayanan = ukpp::findOrFail($id_pelayanan, ['id', 'pelayanan']);
 
-        $now = Carbon::now();
-        $startTime = $request->start_time ? Carbon::parse($request->start_time)->toDateTimeString() : $now->startOfMonth();
-        $endTime = $request->end_time ? Carbon::parse($request->end_time)->toDateTimeString() : $now->endOfMonth();
-
-        if ($role !== "admin") {
-            $data = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
-                ->where('id_users', $user_id);
-
-            if ($startTime && $endTime) {
-                $data->whereBetween('created_at', [$startTime, $endTime]);
-            } else {
-                $data->whereMonth('created_at', $now->month)
-                    ->whereYear('created_at', $now->year);
-            }
-
-            $result = $data->get();
-            return Inertia::render("Ukpp/Data", ['data' => $result, 'sub' => $sub, 'request' => $request]);
-        }
+        $data = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
+            ->where('id_users', $user_id)->get();
+        return Inertia::render("Ukpp/Data", ['pelayanan' => $pelayanan, 'data' => $data, 'sub' => $sub]);
     }
+
     public function create_nilai()
     {
         return inertia::render("");

@@ -145,7 +145,7 @@ const forms = useForm({
                                 <div class="flex items-center space-x-4">
                                     <TextInput id="totalDesa" type="text" class="mt-1 block w-full"
                                         v-model="forms.totalDesa" readonly autocomplete="totalDesa" />
-                                    <Link class="text-teal-600 hover:text-teal-500">
+                                    <Link :href="route('desa')" class="text-teal-600 hover:text-teal-500">
                                     <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>
                                 </div>
@@ -166,7 +166,7 @@ const forms = useForm({
                                 <div class="flex items-center space-x-4">
                                     <TextInput id="sdm" type="text" class="mt-1 block w-full" v-model="forms.sdm" readonly
                                         autocomplete="sdm" />
-                                    <Link class="text-teal-600 hover:text-teal-500">
+                                    <Link :href="route('sdm')" class="text-teal-600 hover:text-teal-500">
                                     <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>
                                 </div>

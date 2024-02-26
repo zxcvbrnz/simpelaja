@@ -2,9 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
-const data = usePage().props.data;
-const user = usePage().props.user;
-const sub = usePage().props.sub;
+const { data, user, sub } = usePage().props;
 
 $(document).ready(function () {
 
@@ -101,7 +99,7 @@ $(document).ready(function () {
                                 <td>{{ sub.target + ' ' + sub.str_target }}</td>
                                 <td class="flex items-center">
                                     <Link
-                                        :href="route('pelayanan.detail.admin.user', { id_program: $page.props.program.id, id_sub: $page.props.sub.id, id_user: user.id })"
+                                        :href="route('pelayanan.detail.admin.user', { id_pelayanan: $page.props.pelayanan.id, id_sub: $page.props.sub.id, id_user: user.id })"
                                         class="text-teal-600 hover:text-teal-500">
                                     <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>

@@ -1,29 +1,54 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import TextInput from '@/Components/TextInput.vue';
+import Chart from 'chart.js/auto';
 
-const data = usePage().props.data;
-const user = usePage().props.auth.user;
+const { data, name, capaian, grapik } = usePage().props;
 
+const form = useForm({
+    start_time: '',
+    end_time: '',
+});
 
 $(document).ready(function () {
-
     var table = $('#example').DataTable({
         responsive: true
-    })
-        .columns.adjust()
-        .responsive.recalc();
+    }).columns.adjust().responsive.recalc();
+
+    const ctx = $('#myChart');
+
+    new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: data.map(item => item.nama),
+            datasets: [{
+                label: 'Capaian',
+                data: data.map(item => grapik[item.id] || 0),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
 });
 </script>
 
 <template>
-    <Head title="Indikator Upaya Kesehatan Perseorangan dan Penunjang" />
+    <Head title="Indikator Upaya Kesehatan Masyarakat" />
 
     <AuthenticatedLayout>
         <div class="py-4 font-sans">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <h2 class="font-semibold text-xl text-slate-500 leading-tight mb-4">
-                    {{ $page.props.name.pelayanan }}
+                    {{ name.pelayanan }}
                 </h2>
                 <nav class="flex bg-white px-4 py-6 shadow-md" aria-label="Breadcrumb">
                     <ol class="inline-flex items-center space-x-1 md:space-x-3">
@@ -39,19 +64,6 @@ $(document).ready(function () {
                             Dashboard
                             </Link>
                         </li>
-                        <li aria-current="page">
-                            <div class="flex items-center">
-                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
-                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    Indikator
-                                </span>
-                            </div>
-                        </li>
                         <li>
                             <div class="flex items-center">
                                 <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
@@ -62,7 +74,7 @@ $(document).ready(function () {
                                 </svg>
                                 <Link :href="route('ukpp.pelayanan')"
                                     class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">
-                                Indikator Upaya Kesehatan Perseorangan dan Penunjang</Link>
+                                Upaya Kesehatan Perseorangan dan Penunjang</Link>
                             </div>
                         </li>
                         <li aria-current="page">
@@ -74,72 +86,70 @@ $(document).ready(function () {
                                         clip-rule="evenodd"></path>
                                 </svg>
                                 <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    pelayanan
-                                </span>
-                            </div>
-                        </li>
-                        <li aria-current="page">
-                            <div class="flex items-center">
-                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
-                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
-                                    {{ $page.props.name.pelayanan }}
+                                    {{ name.pelayanan }}
                                 </span>
                             </div>
                         </li>
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <div class="flex justify-end mb-4">
-                        <Link :href="route('add.puskesmas')"
-                            class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                            class="bi bi-bookmark-plus-fill" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m6.5-11a.5.5 0 0 0-1 0V6H6a.5.5 0 0 0 0 1h1.5v1.5a.5.5 0 0 0 1 0V7H10a.5.5 0 0 0 0-1H8.5z" />
-                        </svg>
-                        <span>Tambah</span>
-                        </Link>
-                    </div>
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
-                                <th data-priority="1" class="text-start">Pelayanan</th>
+                                <th data-priority="1" class="text-start">Program</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(data, index) in data" :key="index">
+                            <tr v-for="(data, index) in  data " :key="index">
                                 <td class="flex justify-between">
-                                    <span><span class="mr-5 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
-                                        index + 1 }}</span>{{ data.subpelayanan }}</span>
-                                    <Link v-if="user.role === 'puskesmas'"
-                                        :href="route('pelayanan.detail.data', { id_pelayanan: $page.props.name.id, id_sub: data.id })"
-                                        class="text-teal-600 hover:text-white border border-teal-600 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-carolina-blue font-medium rounded text-sm px-5 py-2 text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                        <path
-                                            d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                    </svg>
-                                    </Link>
-                                    <Link v-if="user.role === 'admin'"
-                                        :href="route('pelayanan.detail.admin', { id_pelayanan: $page.props.name.id, id_sub: data.id })"
-                                        class="text-teal-600 hover:text-white border border-teal-600 hover:bg-teal-600 focus:ring-4 focus:outline-none focus:ring-carolina-blue font-medium rounded text-sm px-5 py-2 text-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                        <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0" />
-                                        <path
-                                            d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
-                                    </svg>
+                                    <div class="flex items-center">
+                                        <span class="font-bold">{{
+                                            index + 1 }}
+                                            <span class="ml-4 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
+                                                {{ data.subpelayanan }}
+                                            </span>
+                                        </span>
+                                        <div class="ml-4"
+                                            v-for="(cap, index) in capaian.filter(item => item.id_subpelayanan_ukpp == data.id)"
+                                            :key="index">
+                                            <div>
+                                                <div
+                                                    class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 rounded-lg dark:bg-green-800 dark:text-green-200">
+                                                    <svg class="w-5 h-5" aria-hidden="true"
+                                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <Link :href="route('pelayanan.detail.data', { id_pelayanan: name.id, id_sub: data.id })"
+                                        class="text-teal-600 hover:text-teal-500">
+                                    <i class="fa-sharp fa-solid fa-eye"></i>
                                     </Link>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <form @submit.prevent="form.post(route('filter.pelayanan', { id: name.id }))"
+                        class="flex my-6 space-x-2 pt-10">
+                        <TextInput v-model="form.start_time" type="date" class="mt-1 block w-full" required />
+                        <TextInput v-model="form.end_time" type="date" class="mt-1 block w-full" required />
+                        <button
+                            class="text-sm text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
+                            :disabled="form.processing">Filter</button>
+                    </form>
+                    <Link
+                        class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">
+                    Cetak</Link>
+                    <div class="m-auto">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <div class="m-auto">
+                        <canvas id="barChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>

@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignid("id_subpelayanan_ukpp");
             $table->foreignid("id_users");
-            $table->integer("penyebut");
             $table->integer("pembilang");
-            $table->integer("kali");
+            $table->integer("penyebut")->nullable();
+            $table->integer("kali")->nullable();
             $table->integer("hasil");
             $table->integer("target");
             $table->timestamps();

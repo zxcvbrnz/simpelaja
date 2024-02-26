@@ -140,11 +140,11 @@ const submitCreate = () => {
                             <InputLabel class="mb-3" value="Type Rumus" />
                             <div class="flex space-x-6">
                                 <div class="flex space-x-2">
-                                    <input type="radio" name="type" id="type1" v-model="form.type" value="1">
+                                    <input type="radio" name="type" id="type1" v-model="form.type" value="1"/>
                                     <InputLabel for="type1" value="Type 1" />
                                 </div>
                                 <div class="flex space-x-2">
-                                    <input type="radio" name="type" id="type2" v-model="form.type" value="2">
+                                    <input type="radio" name="type" id="type2" v-model="form.type" value="2"/>
                                     <InputLabel for="type2" value="Type 2" />
                                 </div>
                             </div>

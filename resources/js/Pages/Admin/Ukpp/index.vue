@@ -19,7 +19,7 @@ const confirmUkppDeletion = (id, name) => {
         confirmButtonText: "Ya, Hapus!"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('delete.ukm'), {
+            form.delete(route('delete.ukpp'), {
                 onSuccess: () => {
                     Swal.fire({
                         title: "Dihapus!",

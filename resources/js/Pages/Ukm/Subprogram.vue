@@ -9,6 +9,7 @@ const { data, auth, name, capaian, grapik } = usePage().props;
 const form = useForm({
     start_time: '',
     end_time: '',
+    id_ukm: name.id,
 });
 
 $(document).ready(function () {
@@ -103,14 +104,16 @@ $(document).ready(function () {
                             <tr v-for="(data, index) in  data " :key="index">
                                 <td class="flex justify-between">
                                     <div class="flex items-center">
-                                        <span class="mr-1 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
+                                        <span class="font-bold">{{
                                             index + 1 }}
+                                            <span class="ml-4 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
+                                                {{ data.nama }}
+                                            </span>
                                         </span>
-                                        <div class="mr-4"
-                                            v-for="(capaian, index) in capaian.filter(item => item.id_subprogram_ukm == data.id)"
+                                        <div class="ml-4"
+                                            v-for="(cap, index) in capaian.filter(item => item.id_subprogram_ukm == data.id)"
                                             :key="index">
-                                            {{ capaian.length }}
-                                            <div v-if="capaian.id_subprogram_ukm == data.id">
+                                            <div>
                                                 <div
                                                     class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 rounded-lg dark:bg-green-800 dark:text-green-200">
                                                     <svg class="w-5 h-5" aria-hidden="true"
@@ -121,19 +124,7 @@ $(document).ready(function () {
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <div v-if="capaian.length == 0">
-                                                <div
-                                                    class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-orange-500 rounded-lg dark:bg-orange-700 dark:text-orange-200">
-                                                    <svg class="w-5 h-5" aria-hidden="true"
-                                                        xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                                                        viewBox="0 0 20 20">
-                                                        <path
-                                                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z" />
-                                                    </svg>
-                                                </div>
-                                            </div>
                                         </div>
-                                        {{ data.nama }}
                                     </div>
                                     <Link :href="route('program.detail.data', { id_program: name.id, id_sub: data.id })"
                                         class="text-teal-600 hover:text-teal-500">
@@ -152,8 +143,10 @@ $(document).ready(function () {
                             :disabled="form.processing">Filter</button>
                     </form>
                     <Link
+                        :href="route('export.ukm', { start_time: form.start_time, end_time: form.end_time, id_ukm: name.id })"
+                        target="_blank"
                         class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">
-                    Cetak</Link>
+                    Export Excel</Link>
                     <div class="m-auto">
                         <canvas id="myChart"></canvas>
                     </div>

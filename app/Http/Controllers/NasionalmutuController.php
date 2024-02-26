@@ -12,24 +12,17 @@ class NasionalmutuController extends Controller
 {
     public function mutu()
     {
-        $data = nasionalmutu::all();
-        return Inertia::render("", compact("data"));
+        $data = nasionalmutu::get(["id", "mutu"]);
+        $route = Auth::user()->role === 'admin' ? 'Admin/NasionalMutu/index' : 'NasionalMutu/index';
+        return Inertia::render($route, ["data" => $data]);
     }
     public function create_mutu()
     {
-        return Inertia::render("");
+        return Inertia::render("Admin/NasionalMutu/Create");
     }
     public function creating_mutu(Request $request)
     {
-        nasionalmutu::create([
-            "mutu" => $request->mutu,
-            "str_penyebut" => $request->str_penyebut,
-            "str_pembilang" => $request->str_pembilang,
-            "target" => $request->target,
-            "nilai_4" => $request->nilai_4,
-            "nilai_7" => $request->nilai_7,
-            "nilai_10" => $request->nilai_10,
-        ]);
+        nasionalmutu::create($request->all());
         return redirect()->back();
     }
     public function edit_mutu($id)
@@ -46,7 +39,6 @@ class NasionalmutuController extends Controller
     public function delete($id)
     {
         nasionalmutu::find($id)->delete();
-        nilai_nasionalmutu::where("id_nasionalmutu", $id)->delete();
         return Inertia::render("");
     }
     public function nilai_mutu($id)

@@ -14,12 +14,17 @@ return new class extends Migration
         Schema::create('nasionalmutus', function (Blueprint $table) {
             $table->id();
             $table->string("mutu");
-            $table->string("str_penyebut");
             $table->string("str_pembilang");
+            $table->string("str_penyebut")->nullable();
+            $table->integer("kali")->nullable();
+            $table->integer("type");
             $table->integer("target");
             $table->integer("nilai_4");
-            $table->integer("nilai_7");
+            $table->integer("type_nilai_4");
+            $table->integer("nilai_7_start");
+            $table->integer("nilai_7_end");
             $table->integer("nilai_10");
+            $table->integer("type_nilai_10");
             $table->timestamps();
         });
     }

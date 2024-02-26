@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\desa;
+use App\Models\manajemen;
+use App\Models\nilai_manajemen;
 use App\Models\nilai_ukm;
 use App\Models\nilai_pelayanan;
 use App\Models\pelayanan;
 use App\Models\profile;
+use App\Models\submanajemen;
 use App\Models\subprogram;
 use App\Models\ukm;
 use App\Models\ukpp;
@@ -111,6 +114,12 @@ class AdminController extends Controller
         return Inertia::render("Ukm/Data", ['program' => $program, 'data' => $data, 'sub' => $sub, 'username' => $user->name]);
     }
 
+    public function subpelayanan($id)
+    {
+        $name = ukpp::findOrFail($id, ['id', 'pelayanan']);
+        $data = pelayanan::where('id_ukpp', $id)->get();
+        return Inertia::render("Admin/Ukpp/Subpelayanan/index", ['data' => $data, 'name' => $name]);
+    }
 
     public function detail_sub_ukpp($id_pelayanan, $idsub)
     {
@@ -139,5 +148,41 @@ class AdminController extends Controller
         $data = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
             ->where('id_users', $user->id)->get();
         return Inertia::render("Ukpp/Data", ['pelayanan' => $pelayanan, 'data' => $data, 'sub' => $sub, 'username' => $user->name]);
+    }
+
+    public function submanajemen($id)
+    {
+        $name = manajemen::findOrFail($id, ['id', 'manajemen']);
+        $data = submanajemen::where('id_manajemen', $id)->get();
+        return Inertia::render("Admin/Manajemen/Sub/index", ['data' => $data, 'name' => $name]);
+    }
+
+    public function detail_sub_manajemen($id, $idsub)
+    {
+        $user = User::where('role', 'puskesmas')->get(['id', 'name']);
+
+        $name_program = manajemen::findOrFail($id, ['id', 'manajemen']);
+
+        $now = Carbon::now();
+
+        $sub = submanajemen::findOrFail($idsub);
+
+        $data_ni = nilai_manajemen::where('id_submanajemen', $idsub)
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year)
+            ->get(["id_users", "hasil"]);
+
+        return Inertia::render('Admin/Manajemen/Sub/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'manajemen' => $name_program]);
+    }
+
+    public function nilai_manajemen($id, $idsub, $iduser)
+    {
+        $user = User::findOrFail($iduser, ['id', 'name']);
+        $sub = submanajemen::findOrFail($idsub);
+        $manajemen = manajemen::findOrFail($id, ['id', 'manajemen']);
+
+        $data = nilai_manajemen::where('id_submanajemen', $idsub)
+            ->where('id_users', $user->id)->get();
+        return Inertia::render("Manajemen/Data", ['manajemen' => $manajemen, 'data' => $data, 'sub' => $sub, 'username' => $user->name]);
     }
 }

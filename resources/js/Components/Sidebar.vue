@@ -51,7 +51,14 @@ import SideLink from './SideLink.vue';
                     </SideLink>
                 </li>
                 <li v-if="$page.props.auth.user.role == 'puskesmas'">
-                    <SideLink :href="route('detail.profil')" :active="route().current('detail.profil')">
+                    <SideLink :href="route('detail.profil')" :active="route().current('detail.profil')
+                        || route().current('desa')
+                        || route().current('desa.create')
+                        || route().current('desa.edit')
+                        || route().current('sdm')
+                        || route().current('sdm.create')
+                        || route().current('sdm.edit')
+                        ">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 transition duration-75 text-white"
                             fill="currentColor" viewBox="0 0 20 20">
                             <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
@@ -95,14 +102,23 @@ import SideLink from './SideLink.vue';
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href="route('dashboard')">
-
+                    <SideLink :href="route('manajemen.index')" :active="route().current('manajemen.index')
+                        || route().current('manajemen.create')
+                        || route().current('manajemen.edit')
+                        || route().current('manajemen.detail')
+                        || route().current('submanajemen.create')
+                        || route().current('submanajemen.edit')
+                        || route().current('manajemen.detail.admin')
+                        || route().current('manajemen.detail.admin.user')
+                        || route().current('manajemen.detail.data')
+                        ">
                         <span class="ms-10">Manajemen</span>
                     </SideLink>
                 </li>
                 <li>
-                    <SideLink :href="route('dashboard')">
-
+                    <SideLink :href="route('nasionalmutu.index')" :active="route().current('nasionalmutu.index')
+                        || route().current('nasionalmutu.create')
+                        ">
                         <span class="ms-10">Nasional Mutu</span>
                     </SideLink>
                 </li>

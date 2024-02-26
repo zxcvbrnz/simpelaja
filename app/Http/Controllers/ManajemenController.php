@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\manajemen;
 use App\Models\nilai_manajemen;
 use App\Models\submanajemen;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,48 +16,67 @@ class ManajemenController extends Controller
 {
     public function manajemen()
     {
-        $data = manajemen::all();
-        return Inertia::render("", compact("data"));
+        $data = manajemen::get(["id", "manajemen"]);
+        $route = Auth::user()->role === 'admin' ? 'Admin/Manajemen/index' : 'Manajemen/index';
+        return Inertia::render($route, ["data" => $data]);
     }
     public function create_manajemen()
     {
-        return Inertia::render("");
+        return Inertia::render("Admin/Manajemen/Create");
     }
     public function creating_manajemen(Request $request)
     {
         manajemen::create([
             "manajemen" => $request->manajemen,
         ]);
-        return redirect()->back();
+        return back();
     }
     public function edit_manajemen($id)
     {
         $data = manajemen::find($id);
-        return Inertia::render("", compact("data"));
+        return Inertia::render("Admin/Manajemen/Edit", ['data' => $data]);
     }
-    public function editing_manajemen(Request $request, $id)
+    public function update_manajemen(Request $request, $id)
     {
         $data = manajemen::find($id);
         $data->update($request->all());
-        return redirect()->back();
+        return back();
     }
-    public function delete_manajemen($id)
+    public function delete_manajemen(Request $request)
     {
+        $id = $request->id;
         manajemen::find($id)->delete();
         submanajemen::where("id_manajemen", $id)->delete();
-        return Inertia::render("");
+        return back();
     }
 
     // ========== SUB MANAJEMEN =============
-    public function submanajemen($id)
+    public function submanajemen(Request $request, $id)
     {
-        $data = submanajemen::where("id_submanajemen", $id);
-        return Inertia::render("", compact("data"));
+        // Program
+        $name = manajemen::findOrFail($id, ['id', 'manajemen']);
+        $data = submanajemen::where('id_manajemen', $id)->get();
+
+        // Mencari data capaian berdasarka User
+        $id_user = $request->user()->id;
+        $data_skala = nilai_manajemen::where('id_users', $id_user);
+
+        // data capaian yang dibuat oleh user terkait dengan id_ukm
+        $now = Carbon::now();
+        $skala = $data_skala
+            ->whereMonth('created_at', $now->month)
+            ->whereYear('created_at', $now->year);
+
+        $skala = $skala->get(['id_submanajemen', 'hasil', 'ket_skala']);
+
+        return Inertia::render("Manajemen/Sub/index", ['data' => $data, 'name' => $name, 'skala' => $skala]);
+        // $data = submanajemen::where("id_manajemen", $id);
+        // return Inertia::render("Manajemen/Sub/index", ['data' => $data]);
     }
-    public function create_submanajemen()
+    public function create_submanajemen($id)
     {
-        $data = manajemen::all();
-        return Inertia::render("", compact("data"));
+        $data = manajemen::findOrFail($id, ['id', 'manajemen']);
+        return Inertia::render("Admin/Manajemen/Sub/Create", ['data' => $data]);
     }
     public function creating_submanajemen(Request $request)
     {
@@ -68,74 +88,75 @@ class ManajemenController extends Controller
             "ket_nilai_7" => $request->ket_nilai_7,
             "ket_nilai_10" => $request->ket_nilai_10,
         ]);
-        return redirect("");
+        return back();
     }
-    public function edit_submanajemen($id)
+    public function edit_submanajemen($id, $idsub)
     {
-        $id_data = manajemen::all();
-        $data = submanajemen::find($id);
-        return Inertia::render("", compact("data", "id_data"));
+        $data = manajemen::findOrFail($id, ['id', 'manajemen']);
+        $datasub = submanajemen::findOrFail($idsub);
+        return Inertia::render("Admin/Manajemen/Sub/Edit", ['data' => $data, 'datasub' => $datasub]);
     }
-    public function editing_submanajemen(Request $request, $id)
+    public function update_submanajemen(Request $request)
     {
-        $data = submanajemen::find($id);
+        $id = $request->id;
+        $data = submanajemen::findOrFail($id);
         $data->update($request->all());
-        return redirect("");
+        return back();
     }
-    public function delete_submanajemen($id)
+    public function delete_submanajemen(Request $request)
     {
-        submanajemen::find($id)->delete();
-        nilai_manajemen::where("id_submanajemen", $id)->delete();
-        return Inertia::render("");
+        $id = $request->id;
+        submanajemen::findOrFail($id)->delete();
+        return back();
     }
     // ====== NILAI MANAJEMEN =======
-    public function nilai_manajemen($id, $idpuskes)
+    public function nilai_manajemen(Request $request, $id_manajemen, $idsub)
     {
         $user_id = auth()->user()->id;
-        $role = auth()->user()->role;
-        if ($role !== "admin") {
-            $data = nilai_manajemen::where('id_submanajemen', $id)
-                ->where('user_id', $user_id)
-                ->get();
-            return Inertia::render("", compact("data"));
-        } else {
-            // $id_puskes = User::pluck('id')->all();
-            $data = nilai_manajemen::where('id_submanajemen', $id)
-                ->where('user_id', $idpuskes)
-                ->get();
-            return Inertia::render("", compact("data"));
-        }
+        $sub = submanajemen::findOrFail($idsub);
+        $manajemen = manajemen::findOrFail($id_manajemen, ['id', 'manajemen']);
+
+        $data = nilai_manajemen::where('id_submanajemen', $idsub)
+            ->where('id_users', $user_id)->get();
+        return Inertia::render("Manajemen/Data", ['manajemen' => $manajemen, 'data' => $data, 'sub' => $sub]);
     }
+
     public function create_nilai()
     {
         $data = submanajemen::all();
         return inertia::render("", compact("data"));
     }
+
     public function creating_nilai(Request $request, $id)
     {
         $data = submanajemen::findOrFail($id);
         $id_user = Auth::user()->id;
+
+        $check = nilai_manajemen::where('id_users', $id_user)
+            ->where('id_submanajemen', $data->id)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::Now()->year);
+        if ($check->count() > 0) {
+            return back()->with('error', 'Data Bulan ' . Carbon::now()->format('F') . ' Sudah Di Input');
+        }
         //start logic hitungan.
-        if ($request->ket_skala ==  4) {
-            $hasil = 4;
-            $ket_skala = submanajemen::where('id', $id)->value('ket_skala_4');
-        } else if ($request->ket_skala ==  7) {
-            $hasil = 7;
-            $ket_skala = submanajemen::where('id', $id)->value('ket_skala_7');
-        } else if ($request->ket_skala ==  10) {
-            $hasil = 10;
-            $ket_skala = submanajemen::where('id', $id)->value('ket_skala_10');
-        } else if ($request->ket_skala ==  0) {
-            $hasil = 0;
-            $ket_skala = submanajemen::where('id', $id)->value('ket_skala_0');
+        $ket_skala = '';
+        if ($request->skala ==  4) {
+            $ket_skala = $data->ket_nilai_4;
+        } else if ($request->skala ==  7) {
+            $ket_skala = $data->ket_nilai_7;
+        } else if ($request->skala ==  10) {
+            $ket_skala = $data->ket_nilai_10;
+        } else if ($request->skala ==  0) {
+            $ket_skala = $data->ket_nilai_0;
         }
         // end login hitungan
         nilai_manajemen::create([
             "id_submanajemen" => $id,
             "id_users" => $id_user,
-            "hasil" => $hasil,
+            "hasil" => $request->skala,
             "ket_skala" => $ket_skala,
         ]);
-        return redirect("");
+        return back();
     }
 }

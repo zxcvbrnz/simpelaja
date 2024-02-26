@@ -2,9 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
-const data = usePage().props.data;
-const user = usePage().props.user;
-const sub = usePage().props.sub;
+const { data, user, sub } = usePage().props;
 
 $(document).ready(function () {
 

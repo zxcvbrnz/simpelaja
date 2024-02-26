@@ -148,16 +148,18 @@ const submitCreate = () => {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr class="text-start">
-                                <th data-priority="1">Tanggal</th>
-                                <th data-priority="2">{{ sub.str_pembilang }}</th>
-                                <th data-priority="3" v-if="sub.type == '1'">{{ sub.str_penyebut }}</th>
-                                <th data-priority="4">Capaian</th>
-                                <th data-priority="5">Target</th>
+                                <th data-priority="1" class="text-start">Data</th>
+                                <th data-priority="2" class="text-start">Dibuat Pada</th>
+                                <th data-priority="3" class="text-start">{{ sub.str_pembilang }}</th>
+                                <th data-priority="4" class="text-start" v-if="sub.type == '1'">{{ sub.str_penyebut }}</th>
+                                <th data-priority="5" class="text-start">Capaian</th>
+                                <th data-priority="6" class="text-start">Target</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(data, index) in data" :key="index">
-                                <td>{{ dayjs(String(data.created_at)).format('DD MMMM YYYY') }}</td>
+                                <td>{{ dayjs(String(data.data_untuk)).format('MMMM YYYY') }}</td>
+                                <td>{{ dayjs(String(data.created_at)).format('DD MMMM YYYY, HH:mm') }}</td>
                                 <td>{{ data.pembilang + ' ' + sub.satuan }}</td>
                                 <td v-if="sub.type == '1'">{{ data.penyebut + ' ' + sub.satuan }}</td>
                                 <td>{{ data.hasil + ' ' + sub.str_target }}</td>

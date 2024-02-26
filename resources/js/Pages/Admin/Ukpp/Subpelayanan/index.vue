@@ -1,12 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
-import TextInput from '@/Components/TextInput.vue';
 import Swal from 'sweetalert2';
-import Chart from 'chart.js/auto';
 
 const data = usePage().props.data;
-const user = usePage().props.auth.user;
 const name = usePage().props.name;
 
 const confirmDeletion = (id, name) => {
@@ -23,7 +20,7 @@ const confirmDeletion = (id, name) => {
         confirmButtonText: "Ya, Hapus!"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('delete.subpelayanan', { id: name.id }), {
+            form.delete(route('delete.subpelayanan', { id: id }), {
                 onSuccess: () => {
                     Swal.fire({
                         title: "Dihapus!",
