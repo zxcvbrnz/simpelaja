@@ -15,11 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId("id_users");
             $table->foreignId("id_nasionalmutu");
-            $table->integer("penyebut");
             $table->integer("pembilang");
-            $table->integer("kali");
-            $table->integer("hasil");
-            $table->integer("nilai_skala");
+            $table->integer("penyebut")->nullable();
+            $table->integer("kali")->nullable();
+            $table->float("target");
+            $table->float("hasil");
+            $table->integer("nilai");
+            $table->timestamp("data_untuk")->nullable();
             $table->timestamps();
         });
     }

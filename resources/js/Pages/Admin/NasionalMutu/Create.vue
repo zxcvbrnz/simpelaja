@@ -44,7 +44,7 @@ const submitCreate = () => {
 </script>
 
 <template>
-    <Head title="Indikator Manajemen Puskesmas" />
+    <Head title="Indikator Nasional Mutu" />
 
     <AuthenticatedLayout>
         <div class="py-4 font-sans">

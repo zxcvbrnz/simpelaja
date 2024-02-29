@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer("kali")->nullable();
             $table->integer("hasil");
             $table->integer("target");
+            $table->timestamp("data_untuk")->nullable();
             $table->timestamps();
         });
     }

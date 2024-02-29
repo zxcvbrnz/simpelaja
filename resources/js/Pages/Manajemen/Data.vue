@@ -147,13 +147,15 @@ const submitCreate = () => {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr class="text-start">
-                                <th data-priority="1">Tanggal</th>
-                                <th data-priority="4">Skala</th>
-                                <th data-priority="5">Keterangan Skala</th>
+                                <th data-priority="1">Data</th>
+                                <th data-priority="2">Tanggal</th>
+                                <th data-priority="3">Skala</th>
+                                <th data-priority="4">Keterangan Skala</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(data, index) in data" :key="index">
+                                <td>{{ dayjs(String(data.data_untuk)).format('MMMM YYYY') }}</td>
                                 <td>{{ dayjs(String(data.created_at)).format('DD MMMM YYYY') }}</td>
                                 <td>{{ data.hasil }}</td>
                                 <td>{{ data.ket_skala }}</td>

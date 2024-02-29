@@ -87,15 +87,16 @@ class UkmController extends Controller
 
         // data capaian yang dibuat oleh user terkait dengan id_ukm
         $now = Carbon::now();
-        $capaian = $data_capaian
-            ->whereMonth('data_untuk', $now->month)
-            ->whereYear('data_untuk', $now->year);
 
         $data_nilai = [];
+
         if ($startTime && $endTime) {
             $data_nilai = $data_capaian->whereBetween('data_untuk', [$startTime, $endTime])->get();
         } else {
-            $data_nilai = $capaian->get();
+            $data_nilai = $data_capaian
+                ->whereMonth('data_untuk', $now->month)
+                ->whereYear('data_untuk', $now->year)
+                ->get();
         }
 
         $grapik = [];
@@ -111,7 +112,9 @@ class UkmController extends Controller
                 $grapik[$d->id] = 0; // If no data found, set average to 0
             }
         }
-        $capaian = $capaian->get();
+        $capaian = $data_capaian
+            ->whereMonth('data_untuk', $now->month)
+            ->whereYear('data_untuk', $now->year)->get();
 
         // return dd($grapik);
         return Inertia::render("Ukm/Subprogram", ['data' => $data, 'name' => $name, 'capaian' => $capaian, 'grapik' => $grapik]);
@@ -169,7 +172,7 @@ class UkmController extends Controller
     // SEMUA FUNCTION UNTUK NILAI UKM
     // view list nilai nilai ukm sesuai dengan id subprogram
     // untuk puskesmas dan admin
-    public function nilai_ukm(Request $request, $id_program, $idsub)
+    public function nilai_ukm($id_program, $idsub)
     {
         $user_id = auth()->user()->id;
         $sub = subprogram::findOrFail($idsub);
@@ -222,24 +225,12 @@ class UkmController extends Controller
         return back();
     }
 
-    public function export(Request $request, $start_time, $end_time, $id_ukm)
+    public function export($startTime, $endTime)
     {
-        // $start_time = $request->start_time;
-        // $end_time = $request->end_time;
-        // $id_ukm = $request->id_ukm;
-        // $data = subprogram::all();
-        // return Excel::download(new ukmExport($start_time, $end_time, $id_ukm,$data), 'Export UKM ' . Carbon::now() . '.xlsx');
-
-        $start_time = $start_time ? $start_time :  Carbon::now()->format('Y-m-d');
-        $end_time = $end_time ? $end_time : Carbon::now()->format('Y-m-d');
-        $id_ukm = $id_ukm;
-        $data = subprogram::all();
-
-        // Ensure you're including the necessary classes and imports for Excel and ukmExport
-
-        // Assuming ukmExport is properly defined and accepts $start_time, $end_time, $id_ukm, and $data in its constructor
-        $export = new ukmExport;
-        // return ($export)->download('Export UKM ' . Carbon::now() . '.xlsx');
-        return Excel::download(new ukmExport, 'UKM ' . Carbon::now()->format('Y-m-d H:i:s') . '.xlsx');
+        $data = ukm::all();
+        // return Excel::store(new UsersExport($users), 'users.xlsx');
+        // (new ukmExport($data))->download('ukm.xlsx');
+        // return 'The Export has Started';
+        return Excel::download(new ukmExport($data, $startTime, $endTime), 'ukm.xlsx');
     }
 }

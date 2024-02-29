@@ -1,6 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
+
+const { auth, desa, puskesmas, penduduk, sdm } = usePage().props;
+
 </script>
 
 <template>
@@ -9,6 +12,12 @@ import { Head } from '@inertiajs/vue3';
     <AuthenticatedLayout>
         <div class="py-4 font-sans">
             <div class="max-w-7xl py-2 mx-auto sm:px-6 lg:px-8">
+                <div class="mx-4 pb-8">
+                    <span class="text-2xl text-slate-600">
+                        <span v-if="auth.user.role == 'admin'" class="text-polynesian-blue font-bold">ADMIN</span>
+                        Aplikasi Sistem Pelaporan Kinerja Puskesmas (Simpel Aja)
+                    </span>
+                </div>
                 <div class="mb-12 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-4">
                     <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
                         <div
@@ -22,11 +31,11 @@ import { Head } from '@inertiajs/vue3';
                         </div>
                         <div class="p-4 text-right">
                             <p class="block antialiased  text-sm leading-normal font-normal text-blue-gray-600">
-                                Jumlah Puskesmas
+                                {{ auth.user.role == 'puskesmas' ? 'Jumlah Desa' : 'Jumlah Puskesmas' }}
                             </p>
                             <h4
                                 class="block antialiased tracking-normal  text-2xl font-semibold leading-snug text-blue-gray-900">
-                                200
+                                {{ auth.user.role == 'puskesmas' ? desa : puskesmas }}
                             </h4>
                         </div>
                     </div>
@@ -46,11 +55,12 @@ import { Head } from '@inertiajs/vue3';
                                 Penduduk</p>
                             <h4
                                 class="block antialiased tracking-normal  text-2xl font-semibold leading-snug text-blue-gray-900">
-                                2000
+                                {{ penduduk }}
                             </h4>
                         </div>
                     </div>
-                    <div class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
+                    <div v-if="auth.user.role == 'puskesmas'"
+                        class="relative flex flex-col bg-clip-border rounded-xl bg-white text-gray-700 shadow-md">
                         <div
                             class="bg-clip-border mx-4 rounded-xl overflow-hidden bg-gradient-to-tr from-green-600 to-green-400 text-white shadow-green-500/40 shadow-lg absolute -mt-4 grid h-16 w-16 place-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -66,7 +76,7 @@ import { Head } from '@inertiajs/vue3';
                             </p>
                             <h4
                                 class="block antialiased tracking-normal  text-2xl font-semibold leading-snug text-blue-gray-900">
-                                200
+                                {{ sdm }}
                             </h4>
                         </div>
                     </div>

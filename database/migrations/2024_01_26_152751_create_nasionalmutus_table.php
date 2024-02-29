@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer("kali")->nullable();
             $table->integer("type");
             $table->integer("target");
+            $table->integer("type_target");
             $table->integer("nilai_4");
             $table->integer("type_nilai_4");
             $table->integer("nilai_7_start");

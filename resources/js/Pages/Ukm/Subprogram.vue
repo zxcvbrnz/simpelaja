@@ -1,31 +1,59 @@
 <script setup>
+import { ref, onMounted, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
 import TextInput from '@/Components/TextInput.vue';
 import Chart from 'chart.js/auto';
 
-const { data, auth, name, capaian, grapik } = usePage().props;
-
+const { data, auth, name, capaian } = usePage().props;
+const grapik = ref(usePage().props.grapik);
 const form = useForm({
     start_time: '',
     end_time: '',
     id_ukm: name.id,
 });
 
+const filterData = async () => {
+    await form.post(route('filter.subprogram', { id: name.id }), {
+        onSuccess: () => {
+            grapik.value = usePage().props.grapik;
+        }
+    });
+};
+
+onMounted(() => {
+    filterData();
+});
+
+watch(grapik, () => {
+    updateChart();
+});
+
+let myChart;
+
+const updateChart = () => {
+    if (myChart) {
+        myChart.data.datasets[0].data = data.map(item => grapik.value[item.id] || 0);
+        myChart.update();
+    }
+};
+
 $(document).ready(function () {
     var table = $('#example').DataTable({
         responsive: true
-    }).columns.adjust().responsive.recalc();
+    })
+        .columns.adjust()
+        .responsive.recalc();
 
     const ctx = $('#myChart');
 
-    new Chart(ctx, {
+    myChart = new Chart(ctx, {
         type: 'radar',
         data: {
             labels: data.map(item => item.nama),
             datasets: [{
                 label: 'Capaian',
-                data: data.map(item => grapik[item.id] || 0),
+                data: data.map(item => grapik.value[item.id] || 0),
                 borderWidth: 1
             }]
         },
@@ -41,6 +69,7 @@ $(document).ready(function () {
     });
 });
 </script>
+
 
 <template>
     <Head title="Indikator Upaya Kesehatan Masyarakat" />
@@ -134,19 +163,16 @@ $(document).ready(function () {
                             </tr>
                         </tbody>
                     </table>
-                    <form @submit.prevent="form.post(route('filter.subprogram', { id: name.id }))"
-                        class="flex my-6 space-x-2 pt-10">
+                    <form @submit.prevent="filterData" class="flex my-6 space-x-2 pt-10">
                         <TextInput v-model="form.start_time" type="date" class="mt-1 block w-full" required />
                         <TextInput v-model="form.end_time" type="date" class="mt-1 block w-full" required />
                         <button
                             class="text-sm text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
                             :disabled="form.processing">Filter</button>
                     </form>
-                    <Link
-                        :href="route('export.ukm', { start_time: form.start_time, end_time: form.end_time, id_ukm: name.id })"
-                        target="_blank"
-                        class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">
-                    Export Excel</Link>
+                    <a class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600"
+                        :href="route('ukm.export', { start_time: form.start_time ? form.start_time : 0, end_time: form.end_time ? form.end_time : 0 })">Export
+                        Excel</a>
                     <div class="m-auto">
                         <canvas id="myChart"></canvas>
                     </div>

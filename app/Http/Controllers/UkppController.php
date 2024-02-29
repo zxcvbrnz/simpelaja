@@ -9,6 +9,8 @@ use App\Models\pelayanan;
 use App\Models\User;
 use Carbon\Carbon;
 use Inertia\Inertia;
+use App\Exports\UkppExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -67,14 +69,16 @@ class UkppController extends Controller
 
         // data capaian yang dibuat oleh user terkait dengan id_ukpp
         $now = Carbon::now();
-        $capaian = $data_capaian
-            ->whereMonth('created_at', $now->month)
-            ->whereYear('created_at', $now->year);
+
+        $data_nilai = [];
 
         if ($startTime && $endTime) {
-            $data_nilai = $data_capaian->whereBetween('created_at', [$startTime, $endTime])->get();
+            $data_nilai = $data_capaian->whereBetween('data_untuk', [$startTime, $endTime])->get();
         } else {
-            $data_nilai = $capaian->get();
+            $data_nilai =  $data_capaian
+                ->whereMonth('data_untuk', $now->month)
+                ->whereYear('data_untuk', $now->year)
+                ->get();
         }
 
         $grapik = [];
@@ -90,7 +94,9 @@ class UkppController extends Controller
                 $grapik[$d->id] = 0; // If no data found, set average to 0
             }
         }
-        $capaian = $capaian->get();
+        $capaian = $data_capaian
+            ->whereMonth('data_untuk', $now->month)
+            ->whereYear('data_untuk', $now->year)->get();
 
         return Inertia::render("Ukpp/SubPelayanan", ['data' => $data, 'name' => $name, 'capaian' => $capaian, 'grapik' => $grapik]);
     }
@@ -153,10 +159,12 @@ class UkppController extends Controller
     {
         $data = pelayanan::findOrFail($id);
         $id_user = Auth::user()->id;
+
+        $delay = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
         $check = nilai_pelayanan::where('id_users', $id_user)
             ->where('id_subpelayanan_ukpp', $data->id)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::Now()->year);
+            ->whereMonth('created_at', $delay->month)
+            ->whereYear('created_at', $delay->year);
         if ($check->count() > 0) {
             return back()->with('fail', 'Data Bulan ' . Carbon::now()->format('F') . ' Sudah Di Input');
         }
@@ -175,6 +183,15 @@ class UkppController extends Controller
             "kali" => $data->kali,
             "hasil" => $hasil_keseluruhan,
             "target" => $request->target,
+            "data_untuk" => $delay
         ]);
+    }
+    public function export($startTime, $endTime)
+    {
+        $data = ukpp::all();
+        // return Excel::store(new UsersExport($users), 'users.xlsx');
+        // (new ukmExport($data))->download('ukm.xlsx');
+        // return 'The Export has Started';
+        return Excel::download(new UkppExport($data, $startTime, $endTime), 'ukpp.xlsx');
     }
 }

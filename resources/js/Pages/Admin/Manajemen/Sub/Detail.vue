@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import dayjs from 'dayjs';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
 const { data, user, sub, manajemen } = usePage().props;
@@ -93,10 +94,16 @@ $(document).ready(function () {
                                 <td>
                                     <span><span class="mr-5 font-bold">{{ index + 1 }}</span>{{ user.name }}</span>
                                 </td>
-                                <td></td>
                                 <td>
-                                    <div v-for="(data, index) in data.filter((data) => data.id_users === user.id)"
+                                    <div v-for="(data, index) in data.filter(item => item.id_users == user.id)"
                                         :key="index">
+                                        {{ dayjs(String(data.created_at)).format('DD MMMM YYYY, HH:mm') }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div v-for="(data, index) in data.filter(item => item.id_users == user.id)"
+                                        :key="index">
+                                        {{ data.hasil }}
                                     </div>
                                 </td>
                                 <td class="flex items-center">

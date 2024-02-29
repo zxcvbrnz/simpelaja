@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\DesaController;
 use App\Http\Controllers\ManajemenController;
 use App\Http\Controllers\NasionalmutuController;
@@ -30,11 +31,14 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [Controller::class, 'index'])->name('dashboard');
+
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -70,7 +74,14 @@ Route::middleware('auth')->group(function () {
     })->name('manajemen.detail');
 
     // Nasional Mutu
-    Route::get('indikator/nasional-mutu', [NasionalmutuController::class, 'mutu'])->name('nasionalmutu.index');
+    // Route::get('indikator/nasional-mutu', [NasionalmutuController::class, 'mutu'])->name('nasionalmutu.index');
+    Route::get('/indikator/nasional-mutu', function (Request $request) {
+        if (auth()->user()->role == 'admin') {
+            return app(AdminController::class)->mutu();
+        } else {
+            return app(NasionalmutuController::class)->mutu($request);
+        }
+    })->name('nasionalmutu.index');
 
     Route::middleware('admin')->group(function () {
         Route::post('register', [RegisteredUserController::class, 'store'])->name('register');
@@ -137,6 +148,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/indikator/nasional-mutu/{id}/edit', [NasionalmutuController::class, 'edit_mutu'])->name('mutu.edit');
         Route::patch('/indikator/nasional-mutu/{id}/edit', [NasionalmutuController::class, 'update_mutu'])->name('mutu.update');
         Route::delete('/indikator/nasional-mutu', [NasionalmutuController::class, 'delete_mutu'])->name('mutu.delete');
+
+        Route::get('/indikator/nasional-mutu/{id}', [AdminController::class, 'detail_mutu'])->name('mutu.detail.admin');
+        Route::get('/indikator/nasional-mutu/{id}/detail/{id_user}', [AdminController::class, 'nilai_mutu'])->name('mutu.detail.admin.user');
     });
 
     Route::middleware('puskesmas')->group(function () {
@@ -163,16 +177,24 @@ Route::middleware('auth')->group(function () {
         Route::post('/indikator/ukm/{id}/program', [UkmController::class, 'subprogram'])->name('filter.subprogram');
         Route::post('/indikator/ukm/program/{id_sub}/data', [UkmController::class, 'creating_nilai'])->name('program.data.add');
         Route::get('/indikator/ukm/{id_program}/program/{id_sub}/data', [UkmController::class, 'nilai_ukm'])->name('program.detail.data');
-        Route::get('ukm/export/{start_time}/{end_time}/{id_ukm}', [UkmController::class, 'export'])->name('export.ukm');
+        Route::get('/ukm-export/{start_time}/{end_time}', [UkmController::class, 'export'])->name('ukm.export');
 
         // ========== UKPP ===========
-        Route::post('/indikator/ukpp/{id}/pelayanan', [UkmController::class, 'subpelayanan'])->name('filter.pelayanan');
+        Route::post('/indikator/ukpp/{id}/pelayanan', [UkppController::class, 'subpelayanan'])->name('filter.pelayanan');
         Route::post('/indikator/ukpp/pelayanan/{id_sub}/data', [UkppController::class, 'creating_nilai'])->name('pelayanan.data.add');
         Route::get('/indikator/ukpp/{id_pelayanan}/pelayanan/{id_sub}/data', [UkppController::class, 'nilai_pelayanan'])->name('pelayanan.detail.data');
+        Route::get('/ukpp-export/{start_time}/{end_time}', [UkppController::class, 'export'])->name('ukpp.export');
 
         // Manajemen
         Route::post('/indikator/manajemen-puskesmas/manajemen/{id_sub}/data', [ManajemenController::class, 'creating_nilai'])->name('manajemen.data.add');
         Route::get('/indikator/manajemen-puskesmas/{id_manajemen}/manajemen/{id_sub}/data', [ManajemenController::class, 'nilai_manajemen'])->name('manajemen.detail.data');
+        Route::get('/manajemen-export/{time}', [ManajemenController::class, 'export'])->name('manajemen.export');
+
+        // Nasional Mutu
+        Route::post('/indikator/nasional-mutu', [NasionalmutuController::class, 'mutu'])->name('filter.nasionalmutu');
+        Route::get('/indikator/nasional-mutu/{id}/data', [NasionalmutuController::class, 'nilai_mutu'])->name('nasionalmutu.detail.data');
+
+        Route::get('/nasionalmutu-export/{start_time}/{end_time}', [NasionalmutuController::class, 'export'])->name('nasionalmutu.export');
     });
 });
 

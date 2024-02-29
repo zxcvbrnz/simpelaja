@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 
 const data = usePage().props.data;
 
-const confirmUkmDeletion = (id, name) => {
+const confirmDeletion = (id, name) => {
     const form = useForm({
         id: id,
     });
@@ -19,11 +19,11 @@ const confirmUkmDeletion = (id, name) => {
         confirmButtonText: "Ya, Hapus!"
     }).then((result) => {
         if (result.isConfirmed) {
-            form.delete(route('delete.ukm'), {
+            form.delete(route('mutu.delete'), {
                 onSuccess: () => {
                     Swal.fire({
                         title: "Dihapus!",
-                        text: "Program telah dihapus.",
+                        text: "Indikator telah dihapus.",
                         icon: "success"
                     }).then((result) => {
                         location.reload();
@@ -105,15 +105,15 @@ $(document).ready(function () {
                                     <span><span class="mr-5 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
                                         index + 1 }}</span>{{ data.mutu }}</span>
                                     <div class="flex justify-center space-x-4 items-center">
-                                        <Link :href="route('program.detail', { id: data.id })"
+                                        <Link :href="route('mutu.detail.admin', { id: data.id })"
                                             class="text-teal-600 hover:text-teal-500">
                                         <i class="fa-sharp fa-solid fa-eye"></i>
                                         </Link>
-                                        <Link :href="route('edit.ukm', { id: data.id })"
+                                        <Link :href="route('mutu.edit', { id: data.id })"
                                             class="text-polynesian-blue hover:text-carolina-blue">
                                         <i class="fa-sharp fa-solid fa-pen-to-square"></i>
                                         </Link>
-                                        <button @click="() => confirmUkmDeletion(data.id, data.program)"
+                                        <button @click="() => confirmDeletion(data.id, data.mutu)"
                                             class="text-red-600 hover:text-red-500">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>

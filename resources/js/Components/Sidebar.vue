@@ -5,7 +5,7 @@ import SideLink from './SideLink.vue';
 // const request = usePage().props.request
 </script>
 <template>
-    <aside id="sidebar-multi-level-sidebar font-roboto leading-4"
+    <aside id="sidebar-multi-level-sidebar"
         class="shadow-lg fixed top-0 left-0 z-40 w-56 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
         <div class="relative h-full px-3 py-4 overflow-y-auto bg-polynesian-blue transition-all ease-in-out duration-300">
@@ -117,7 +117,11 @@ import SideLink from './SideLink.vue';
                 </li>
                 <li>
                     <SideLink :href="route('nasionalmutu.index')" :active="route().current('nasionalmutu.index')
-                        || route().current('nasionalmutu.create')
+                        || route().current('mutu.create')
+                        || route().current('mutu.edit')
+                        || route().current('mutu.detail.admin')
+                        || route().current('mutu.detail.admin.user')
+                        || route().current('nasionalmutu.detail.data')
                         ">
                         <span class="ms-10">Nasional Mutu</span>
                     </SideLink>

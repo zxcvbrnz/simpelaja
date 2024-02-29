@@ -1,8 +1,75 @@
 <script setup>
+import { ref, onMounted, watch } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import TextInput from '@/Components/TextInput.vue';
+import Chart from 'chart.js/auto';
 
-const data = usePage().props.data;
+
+const { data, capaian } = usePage().props;
+
+const grapik = ref(usePage().props.grapik);
+const form = useForm({
+    start_time: '',
+    end_time: '',
+    id: data.id,
+});
+
+const filterData = async () => {
+    await form.post(route('filter.nasionalmutu'), {
+        onSuccess: () => {
+            grapik.value = usePage().props.grapik;
+        }
+    });
+};
+
+onMounted(() => {
+    filterData();
+});
+
+watch(grapik, () => {
+    updateChart();
+});
+
+let myChart;
+
+const updateChart = () => {
+    if (myChart) {
+        myChart.data.datasets[0].data = data.map(item => grapik.value[item.id] || 0);
+        myChart.update();
+    }
+};
+
+$(document).ready(function () {
+    var table = $('#example').DataTable({
+        responsive: true
+    })
+        .columns.adjust()
+        .responsive.recalc();
+
+    const ctx = $('#myChart');
+
+    myChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+            labels: data.map(item => item.nama),
+            datasets: [{
+                label: 'Capaian',
+                data: data.map(item => grapik.value[item.id] || 0),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+});
 </script>
 
 <template>
@@ -43,7 +110,7 @@ const data = usePage().props.data;
                         </li>
                     </ol>
                 </nav>
-                <div>
+                <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
@@ -57,11 +124,11 @@ const data = usePage().props.data;
                                         <span class="font-bold">{{
                                             index + 1 }}
                                             <span class="ml-4 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
-                                                {{ data.nama }}
+                                                {{ data.mutu }}
                                             </span>
                                         </span>
                                         <div class="ml-4"
-                                            v-for="(cap, index) in capaian.filter(item => item.id_subprogram_ukm == data.id)"
+                                            v-for="(cap, index) in capaian.filter(item => item.id_nasionalmutu == data.id)"
                                             :key="index">
                                             <div>
                                                 <div
@@ -76,14 +143,30 @@ const data = usePage().props.data;
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- <Link :href="route('program.detail.data', { id_program: name.id, id_sub: data.id })"
+                                    <Link :href="route('nasionalmutu.detail.data', { id: data.id })"
                                         class="text-teal-600 hover:text-teal-500">
                                     <i class="fa-sharp fa-solid fa-eye"></i>
-                                    </Link> -->
+                                    </Link>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <form @submit.prevent="filterData" class="flex my-6 space-x-2 pt-10">
+                        <TextInput v-model="form.start_time" type="date" class="mt-1 block w-full" required />
+                        <TextInput v-model="form.end_time" type="date" class="mt-1 block w-full" required />
+                        <button
+                            class="text-sm text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600"
+                            :disabled="form.processing">Filter</button>
+                    </form>
+                    <a class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600"
+                        :href="route('nasionalmutu.export', { start_time: form.start_time ? form.start_time : 0, end_time: form.end_time ? form.end_time : 0 })">Export
+                        Excel</a>
+                    <div class="m-auto">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <div class="m-auto">
+                        <canvas id="barChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>

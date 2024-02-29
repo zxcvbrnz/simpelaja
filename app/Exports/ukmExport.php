@@ -3,83 +3,94 @@
 namespace App\Exports;
 
 use App\Models\nilai_ukm;
-use App\Models\subprogram;
 use App\Models\ukm;
-use Maatwebsite\Excel\Concerns\Exportable;
-use Maatwebsite\Excel\Concerns\FromQuery;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\View as FacadesView;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\FromView;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Maatwebsite\Excel\Concerns\Exportable;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use Throwable;
 
-
-
-class ukmExport implements FromCollection
+class ukmExport implements WithMultipleSheets, ShouldQueue
 {
-    // use Exportable;
+    use Exportable, Queueable;
 
-    // private $start_time;
-    // private $end_time;
-    // private $id_ukm;
+    protected $data;
+    protected $startTime;
+    protected $endTime;
 
-    // public function __construct($start_time, $end_time, $id_ukm)
-    // {
-    //     $this->start_time = $start_time;
-    //     $this->end_time = $end_time;
-    //     $this->id_ukm = $id_ukm;
-    // }
-
-    public function collection()
+    public function __construct($data, $startTime, $endTime)
     {
-        // $Ukm = ukm::where('ud', $this->id_ukm)->get();
-        return ukm::get();
+        $this->data = $data;
+        $this->startTime = $startTime;
+        $this->endTime = $endTime;
     }
-    // public function view(): View
-    // {
-    //     $Ukm = ukm::where('ud', $this->id_ukm);
-    //     $data1 = subprogram::where('id_ukm', $this->id_ukm);
-    //     if ($this->start_time) {
-    //         $data = $data1
-    //             // ->whereBetween('created_at', [
-    //             //     $this->start_time,
-    //             //     $this->end_time
-    //             // ])
-    //             ->get();
-    //         return view('excel', [
-    //             'data' => $data
-    //         ]);
-    //     } else {
-    //         $data = $data1->latest()->get();
-    //         return view('excelUkm', [
-    //             'data' => $data
-    //         ]);
-    //     }
-    //     // $data = nodemcu::where('id_alat',$this->id_alat)->whereBetween('created_at', [
-    //     //         $this->start_time,
-    //     //         $this->end_time])->get();
-    //     // return view('excel',[
-    //     //     'data' => $data
-    //     // ]);
-    // }
-    // public function query()
-    // {
-    //     return nodemcu::query()->whereBetween('created_at', [
-    //         $this->start_time,
-    //         $this->end_time
-    //     ]);
-    // }
-    // public function headings(): array
+    /**
+     * @return array
+     */
+    public function sheets(): array
+    {
+        $sheets = [];
+        $startTime = $this->startTime ? Carbon::parse($this->startTime)->toDateTimeString() : null;
+        $endTime = $this->endTime ? Carbon::parse($this->endTime)->toDateTimeString() : null;
+
+        // Mencari data capaian berdasarka User
+        $id_user = auth()->user()->id;
+        $data_capaian = nilai_ukm::where('id_users', $id_user);
+
+        $now = Carbon::now();
+
+        $data_nilai = [];
+
+        // Apply the between condition only if both $startTime and $endTime are not null
+        if ($startTime && $endTime) {
+            $data_nilai = $data_capaian->whereBetween('data_untuk', [$startTime, $endTime])->get();
+        } else {
+            // If either $startTime or $endTime is null, fetch all data without the between condition
+            $data_nilai = $data_capaian
+                ->whereMonth('data_untuk', $now->month)
+                ->whereYear('data_untuk', $now->year)
+                ->get();
+        }
+
+        foreach ($this->data as $data) {
+            $sheets[] = new ukmSheet($data, $data_nilai);
+        }
+        return $sheets;
+    }
+
+
+    public function failed(Throwable $exception)
+    {
+        // Handle Error
+    }
+
+    // /**
+    //  * @return array
+    //  */
+    // public function registerEvents(): array
     // {
     //     return [
-    //         'id',
-    //         'id_alat',
-    //         'Foto',
-    //         'Waktu RTC',
-    //         'Ketinggian air',
-    //         'suhu',
-    //         'created_at',
-    //         'updated_at',
+    //         BeforeExport::class  => function(BeforeExport $event) {
+    //             $event->writer->setCreator('Hesan');
+    //         },
+    //         AfterSheet::class    => function(AfterSheet $event) {
+    //             $event->sheet->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
+
+    //             $event->sheet->styleCells(
+    //                 'B2:G8',
+    //                 [
+    //                     'borders' => [
+    //                         'outline' => [
+    //                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+    //                             'color' => ['argb' => 'FFFF0000'],
+    //                         ],
+    //                     ]
+    //                 ]
+    //             );
+    //         },
     //     ];
     // }
 }

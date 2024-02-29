@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\desa;
 use App\Models\manajemen;
+use App\Models\nasionalmutu;
 use App\Models\nilai_manajemen;
+use App\Models\nilai_nasionalmutu;
 use App\Models\nilai_ukm;
 use App\Models\nilai_pelayanan;
 use App\Models\pelayanan;
@@ -91,14 +93,14 @@ class AdminController extends Controller
 
         $name_program = ukm::findOrFail($id_program, ['id', 'program']);
 
-        $now = Carbon::now();
+        $now = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
 
         $sub = subprogram::findOrFail($idsub, ['id', 'nama', 'target', 'str_target']);
 
         $data_ni = nilai_ukm::where('id_subprogram_ukm', $idsub)
-            ->whereMonth('created_at', $now->month)
-            ->whereYear('created_at', $now->year)
-            ->first();
+            ->whereMonth('data_untuk', $now->month)
+            ->whereYear('data_untuk', $now->year)
+            ->get(['id_users', 'created_at', 'hasil']);
 
         return Inertia::render('Admin/Ukm/Subprogram/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'program' => $name_program]);
     }
@@ -127,14 +129,14 @@ class AdminController extends Controller
 
         $name_pelayanan = ukpp::findOrFail($id_pelayanan, ['id', 'pelayanan']);
 
-        $now = Carbon::now();
+        $now = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
 
         $sub = pelayanan::findOrFail($idsub, ['id', 'subpelayanan', 'target', 'str_target']);
 
         $data_ni = nilai_pelayanan::where('id_subpelayanan_ukpp', $idsub)
-            ->whereMonth('created_at', $now->month)
-            ->whereYear('created_at', $now->year)
-            ->first();
+            ->whereMonth('data_untuk', $now->month)
+            ->whereYear('data_untuk', $now->year)
+            ->get(['id_users', 'created_at', 'hasil']);
 
         return Inertia::render('Admin/Ukpp/Subpelayanan/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'pelayanan' => $name_pelayanan]);
     }
@@ -163,14 +165,14 @@ class AdminController extends Controller
 
         $name_program = manajemen::findOrFail($id, ['id', 'manajemen']);
 
-        $now = Carbon::now();
+        $now = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
 
         $sub = submanajemen::findOrFail($idsub);
 
         $data_ni = nilai_manajemen::where('id_submanajemen', $idsub)
-            ->whereMonth('created_at', $now->month)
-            ->whereYear('created_at', $now->year)
-            ->get(["id_users", "hasil"]);
+            ->whereMonth('data_untuk', $now->month)
+            ->whereYear('data_untuk', $now->year)
+            ->get(['id_users', 'created_at', 'hasil']);
 
         return Inertia::render('Admin/Manajemen/Sub/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub, 'manajemen' => $name_program]);
     }
@@ -184,5 +186,38 @@ class AdminController extends Controller
         $data = nilai_manajemen::where('id_submanajemen', $idsub)
             ->where('id_users', $user->id)->get();
         return Inertia::render("Manajemen/Data", ['manajemen' => $manajemen, 'data' => $data, 'sub' => $sub, 'username' => $user->name]);
+    }
+
+    public function mutu()
+    {
+        $data = nasionalmutu::get(["id", "mutu"]);
+        return Inertia::render('Admin/NasionalMutu/index', ["data" => $data]);
+    }
+
+    public function detail_mutu($id)
+    {
+        $user = User::where('role', 'puskesmas')->get(['id', 'name']);
+
+        $now = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
+
+        $sub = nasionalmutu::findOrFail($id, ['id', 'mutu', 'target']);
+
+        $data_ni = nilai_nasionalmutu::where('id_nasionalmutu', $id)
+            ->whereMonth('data_untuk', $now->month)
+            ->whereYear('data_untuk', $now->year)
+            ->get(['id_users', 'created_at', 'hasil', 'nilai']);
+
+        return Inertia::render('Admin/NasionalMutu/Detail', ['user' => $user, 'data' => $data_ni, 'sub' => $sub]);
+    }
+
+    public function nilai_mutu($id, $iduser)
+    {
+        $user = User::findOrFail($iduser, ['id', 'name']);
+
+        $sub = nasionalmutu::findOrFail($id);
+
+        $data = nilai_nasionalmutu::where('id_nasionalmutu', $id)
+            ->where('id_users', $user->id)->get();
+        return Inertia::render("NasionalMutu/Data", ['data' => $data, 'sub' => $sub, 'username' => $user->name]);
     }
 }

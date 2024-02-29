@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId("id_users");
             $table->string("hasil");
             $table->string("ket_skala");
+            $table->timestamp("data_untuk")->nullable();
             $table->timestamps();
         });
     }

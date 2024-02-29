@@ -8,6 +8,8 @@ use App\Models\nilai_manajemen;
 use App\Models\submanajemen;
 use Carbon\Carbon;
 use Inertia\Inertia;
+use App\Exports\ManajemenExport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -132,10 +134,11 @@ class ManajemenController extends Controller
         $data = submanajemen::findOrFail($id);
         $id_user = Auth::user()->id;
 
+        $delay = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
         $check = nilai_manajemen::where('id_users', $id_user)
             ->where('id_submanajemen', $data->id)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->whereYear('created_at', Carbon::Now()->year);
+            ->whereMonth('created_at', $delay->month)
+            ->whereYear('created_at', $delay->year);
         if ($check->count() > 0) {
             return back()->with('error', 'Data Bulan ' . Carbon::now()->format('F') . ' Sudah Di Input');
         }
@@ -156,7 +159,16 @@ class ManajemenController extends Controller
             "id_users" => $id_user,
             "hasil" => $request->skala,
             "ket_skala" => $ket_skala,
+            "data_untuk" => $delay
         ]);
         return back();
+    }
+    public function export($time)
+    {
+        $data = manajemen::all();
+        // return Excel::store(new UsersExport($users), 'users.xlsx');
+        // (new ukmExport($data))->download('ukm.xlsx');
+        // return 'The Export has Started';
+        return Excel::download(new ManajemenExport($data, $time), 'manajemen.xlsx');
     }
 }

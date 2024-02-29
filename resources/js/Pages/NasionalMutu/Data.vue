@@ -1,0 +1,158 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import dayjs from 'dayjs';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import Swal from 'sweetalert2';
+
+const { data, sub, username, auth } = usePage().props;
+
+$(document).ready(function () {
+
+    var table = $('#example').DataTable({
+        responsive: true
+    }).columns.adjust().responsive.recalc();
+});
+
+const form = useForm({
+    pembilang: '',
+    penyebut: '',
+    target: sub.target
+});
+
+const submitCreate = () => {
+    form.post(route('program.data.add', { id_sub: sub.id }), {
+        onSuccess: () => {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Telah Menambahkan Data Baru',
+                icon: 'success',
+            }).then((result) => {
+                location.reload();
+            });
+            form.reset();
+        },
+    });
+}
+</script>
+
+<template>
+    <Head title="Indikator Nasional Mutu" />
+
+    <AuthenticatedLayout>
+        <div class="py-4 font-sans">
+            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <h2 class="font-semibold text-xl text-slate-500 leading-tight mb-4">
+                    {{ sub.nama }}
+                </h2>
+                <nav class="flex bg-white px-4 py-6 shadow-md" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                        <li class="inline-flex items-center">
+                            <Link :href="route('dashboard')"
+                                class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                            <svg aria-hidden="true" class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                                </path>
+                            </svg>
+                            Dashboard
+                            </Link>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <Link :href="route('nasionalmutu.index')"
+                                    class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">
+                                Nasional Mutu</Link>
+                            </div>
+                        </li>
+                        <li v-if="auth.user.role == 'admin'">
+                            <div class="flex items-center">
+                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <Link :href="route('mutu.detail.admin', { id: sub.id })"
+                                    class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">
+                                {{ sub.mutu }}</Link>
+                            </div>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <svg aria-hidden="true" class="w-6 h-6 text-gray-400" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">
+                                    {{ auth.user.role == 'admin' ? username : sub.mutu }}
+                                </span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+                <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
+                    <div v-if="$page.props.auth.user.role == 'puskesmas'" class="grid sm:grid-cols-1 md:grid-cols-2 mb-6">
+                        <form @submit.prevent="submitCreate" class="space-y-2">
+                            <div>
+                                <InputLabel>{{ sub.str_pembilang }}</InputLabel>
+                                <TextInput v-model="form.pembilang" required type="number" class="w-full"></TextInput>
+                            </div>
+                            <div v-if="sub.type == '1'">
+                                <InputLabel>{{ sub.str_penyebut }}</InputLabel>
+                                <TextInput v-model="form.penyebut" required type="number" class="w-full"></TextInput>
+                            </div>
+                            <div>
+                                <InputLabel>Target</InputLabel>
+                                <TextInput v-model="form.target" required type="number"></TextInput>
+                                <span class="ms-4">{{ '%' }}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button :disabled="form.processing" type="submit"
+                                    class="flex items-center text-sm space-x-2 text-white shadow-sm shadow-icterina px-4 py-2 rounded-sm bg-indigo-700 hover:bg-indigo-600">Submit</button>
+                                <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
+                                    leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
+                                    <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
+                                </Transition>
+                            </div>
+                        </form>
+                    </div>
+                    <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                        <thead>
+                            <tr class="text-start">
+                                <th data-priority="1" class="text-start">Data</th>
+                                <th data-priority="2" class="text-start">Dibuat Pada</th>
+                                <th data-priority="3" class="text-start">{{ sub.str_pembilang }}</th>
+                                <th data-priority="4" class="text-start" v-if="sub.type == '1'">{{ sub.str_penyebut }}</th>
+                                <th data-priority="5" class="text-start">Nilai</th>
+                                <th data-priority="6" class="text-start">Capaian</th>
+                                <th data-priority="7" class="text-start">Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(data, index) in data" :key="index">
+                                <td>{{ dayjs(String(data.data_untuk)).format('MMMM YYYY') }}</td>
+                                <td>{{ dayjs(String(data.created_at)).format('DD MMMM YYYY, HH:mm') }}</td>
+                                <td>{{ data.pembilang }}</td>
+                                <td v-if="sub.type == '1'">{{ data.penyebut }}</td>
+                                <td>{{ data.nilai }}</td>
+                                <td>{{ data.hasil + ' ' + '%' }}</td>
+                                <td>{{ data.target + ' ' + '%' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </AuthenticatedLayout>
+</template>

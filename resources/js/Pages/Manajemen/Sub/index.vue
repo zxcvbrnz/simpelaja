@@ -1,8 +1,12 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, Link, usePage, useForm } from '@inertiajs/vue3';
+import TextInput from '@/Components/TextInput.vue';
 
 const { data, auth, name, skala } = usePage().props;
+const form = useForm({
+    time: '',
+});
 
 $(document).ready(function () {
     var table = $('#example').DataTable({
@@ -63,6 +67,14 @@ $(document).ready(function () {
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
+                    <div class="w-2/4 mb-6 space-x-3">
+                        <TextInput v-model="form.time" type="month" class="mt-1 block w-full" required />
+                    </div>
+                    <div class="mb-10">
+                        <a :href="route('manajemen.export', { time: form.time ? form.time + '-10' : 0 })"
+                            class="text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">
+                            Export Excel</a>
+                    </div>
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
@@ -100,9 +112,7 @@ $(document).ready(function () {
                             </tr>
                         </tbody>
                     </table>
-                    <!-- <Link
-                        class=" text-sm text-white shadow-sm shadow-teal-300 px-4 py-2 rounded-sm bg-teal-700 hover:bg-teal-600">
-                    Cetak</Link>
+                    <!--
                     <div class="m-auto">
                         <canvas id="myChart"></canvas>
                     </div>
