@@ -18,7 +18,7 @@ class apiControllers extends Controller
      *     operationId="puskesmas",
      *     @OA\Response(
      *         response="default",
-     *         description="indikator bro"
+     *         description="indikator broo"
      *     )
      * )
      */
