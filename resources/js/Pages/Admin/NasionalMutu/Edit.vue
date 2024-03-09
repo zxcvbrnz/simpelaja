@@ -103,7 +103,7 @@ const submitCreate = () => {
                                     <InputLabel for="mutu" value="Nama Indikator" />
 
                                     <TextInput id="mutu" v-model="form.mutu" type="text" class="mt-1 block w-full"
-                                        autocomplete="mutu" />
+                                        autocomplete="mutu" required />
 
                                     <InputError :message="form.errors.mutu" class="mt-2" />
                                 </div>
@@ -123,7 +123,7 @@ const submitCreate = () => {
                                         <!-- Display for Type 1 -->
                                         <div class="w-2/3" v-if="form.type === 1 || form.type === 2">
                                             <!-- First input -->
-                                            <TextInput id="str_pembilang" v-model="form.str_pembilang" type="text"
+                                            <TextInput id="str_pembilang" v-model="form.str_pembilang" type="text" required
                                                 class="mt-1 block w-full" autocomplete="str_pembilang" />
                                             <InputError :message="form.errors.str_pembilang" class="mt-2" />
                                         </div>
@@ -148,13 +148,14 @@ const submitCreate = () => {
                                     <InputLabel for="target" value="Target" />
                                     <div class="flex space-x-3">
                                         <select v-model="form.type_target"
-                                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-1/5 mt-1">
+                                            class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-1/5 mt-1"
+                                            required>
                                             <option value="null" disabled hidden>-</option>
                                             <option v-for="(opt, index) in typeNah" :key="index" :value="opt.label">{{
                                                 opt.value }} </option>
                                         </select>
                                         <TextInput id="target" v-model="form.target" type="number" step="0.01"
-                                            class="mt-1 block w-2/5" autocomplete="target" />
+                                            class="mt-1 block w-2/5" autocomplete="target" required />
                                         <span class="px-2 flex items-center font-bold"> % </span>
                                     </div>
                                 </div>
@@ -168,7 +169,7 @@ const submitCreate = () => {
                                                 opt.value }} </option>
                                         </select>
                                         <TextInput id="nilai_4" v-model="form.nilai_4" type="number" step="0.01"
-                                            class="mt-1 block w-2/5" autocomplete="nilai_4" />
+                                            class="mt-1 block w-2/5" autocomplete="nilai_4" required />
                                         <span class="px-2 flex items-center font-bold"> % </span>
                                     </div>
                                 </div>
@@ -176,10 +177,10 @@ const submitCreate = () => {
                                     <InputLabel for="nilai_7" value="Nilai 7" />
                                     <div class="flex space-x-3">
                                         <TextInput id="nilai_7_start" v-model="form.nilai_7_start" type="number" step="0.01"
-                                            class="mt-1 block w-1/3" autocomplete="nilai_7_start" />
+                                            required class="mt-1 block w-1/3" autocomplete="nilai_7_start" />
                                         <span class="px-2 flex items-center font-bold"> - </span>
                                         <TextInput id="nilai_7_end" v-model="form.nilai_7_end" type="number" step="0.01"
-                                            class="mt-1 block w-1/3" autocomplete="nilai_7_end" />
+                                            required class="mt-1 block w-1/3" autocomplete="nilai_7_end" />
                                         <span class="px-2 flex items-center font-bold"> % </span>
                                     </div>
                                 </div>
@@ -192,7 +193,7 @@ const submitCreate = () => {
                                             <option v-for="(opt, index) in typeNah" :key="index" :value="opt.label">{{
                                                 opt.value }} </option>
                                         </select>
-                                        <TextInput id="nilai_10" v-model="form.nilai_10" type="number" step="0.01"
+                                        <TextInput id="nilai_10" v-model="form.nilai_10" type="number" step="0.01" required
                                             class="mt-1 block w-2/5" autocomplete="nilai_10" />
                                         <span class="px-2 flex items-center font-bold"> % </span>
                                     </div>

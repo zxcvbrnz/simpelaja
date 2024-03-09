@@ -5,7 +5,6 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import Sidebar from '@/Components/Sidebar.vue';
 
-const showingNavigationDropdown = ref(false);
 </script>
 
 <template>

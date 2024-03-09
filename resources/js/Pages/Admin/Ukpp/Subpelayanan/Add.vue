@@ -105,7 +105,7 @@ const submitCreate = () => {
                                 <InputLabel for="nama" value="Nama Program" />
 
                                 <TextInput id="nama" v-model="form.subpelayanan" type="text" class="mt-1 block w-full"
-                                    autocomplete="nama" />
+                                    autocomplete="nama" required />
 
                                 <InputError :message="form.errors.subpelayanan" class="mt-2" />
                             </div>
@@ -114,7 +114,7 @@ const submitCreate = () => {
                                     <InputLabel for="target" value="Target" />
 
                                     <TextInput id="target" v-model="form.target" type="number" class="mt-1 block w-full"
-                                        autocomplete="target" />
+                                        autocomplete="target" required step="0.01" />
 
                                     <InputError :message="form.errors.target" class="mt-2" />
                                 </div>
@@ -122,7 +122,7 @@ const submitCreate = () => {
                                     <InputLabel for="str_target" value="Text Target" />
 
                                     <TextInput id="str_target" v-model="form.str_target" type="text"
-                                        class="mt-1 block w-full" autocomplete="str_target" />
+                                        class="mt-1 block w-full" autocomplete="str_target" required />
 
                                     <InputError :message="form.errors.str_target" class="mt-2" />
                                 </div>
@@ -131,7 +131,7 @@ const submitCreate = () => {
                                 <InputLabel for="satuan" value="Satuan" />
 
                                 <TextInput id="satuan" v-model="form.satuan" type="text" class="mt-1 block w-full"
-                                    autocomplete="satuan" />
+                                    autocomplete="satuan" required />
 
                                 <InputError :message="form.errors.satuan" class="mt-2" />
                             </div>
@@ -155,7 +155,7 @@ const submitCreate = () => {
                                     <div class="w-2/3" v-if="form.type === '1' || form.type === '2'">
                                         <!-- First input -->
                                         <TextInput id="str_pembilang" v-model="form.str_pembilang" type="text"
-                                            class="mt-1 block w-full" autocomplete="str_pembilang" />
+                                            class="mt-1 block w-full" autocomplete="str_pembilang" required />
                                         <InputError :message="form.errors.str_pembilang" class="mt-2" />
                                     </div>
                                     <span v-if="form.type === '1'" class="font-bold px-3">x</span>

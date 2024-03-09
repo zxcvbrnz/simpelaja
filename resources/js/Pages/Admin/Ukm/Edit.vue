@@ -83,7 +83,7 @@ const submitEdit = () => {
                                 <InputLabel for="program" value="Nama Program" />
 
                                 <TextInput id="program" v-model="form.program" type="text" class="mt-1 block w-full"
-                                    autocomplete="program" />
+                                    autocomplete="program" required />
 
                                 <InputError :message="form.errors.program" class="mt-2" />
                             </div>
