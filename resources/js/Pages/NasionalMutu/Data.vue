@@ -106,7 +106,7 @@ const submitCreate = () => {
                         <form @submit.prevent="submitCreate" class="space-y-2">
                             <div>
                                 <InputLabel>{{ sub.str_pembilang }}</InputLabel>
-                                <TextInput v-model="form.pembilang" required type="number" class="w-full"></TextInput>
+                                <TextInput v-model="form.pembilang" required type="number" class="w-full" />
                             </div>
                             <div v-if="sub.type == '1'">
                                 <InputLabel>{{ sub.str_penyebut }}</InputLabel>

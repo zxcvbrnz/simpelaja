@@ -82,7 +82,7 @@ const submitCreate = () => {
                                 <InputLabel for="manajemen" value="Nama Manajemen" />
 
                                 <TextInput id="manajemen" v-model="form.manajemen" type="text" class="mt-1 block w-full"
-                                    autocomplete="manajemen" />
+                                    autocomplete="manajemen" required />
 
                                 <InputError :message="form.errors.manajemen" class="mt-2" />
                             </div>

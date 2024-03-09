@@ -13,6 +13,13 @@ $(document).ready(function () {
         .columns.adjust()
         .responsive.recalc();
 });
+
+const typeNah = [
+    { value: '>', label: 1 },
+    { value: '<', label: 2 },
+    { value: '>=', label: 3 },
+    { value: '<=', label: 4 }
+];
 </script>
 
 <template>
@@ -70,18 +77,24 @@ $(document).ready(function () {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
-                                <th data-priority="1" class="text-start">Puskesmas</th>
-                                <th data-priority="2" class="text-start">Dilaporkan Pada</th>
-                                <th data-priority="3" class="text-start">Nilai</th>
-                                <th data-priority="4" class="text-start">Capaian</th>
-                                <th data-priority="5" class="text-start">Target</th>
-                                <th data-priority="6" class="text-start">Options</th>
+                                <th data-priority="1" class="text-start">No</th>
+                                <th data-priority="2" class="text-start">Puskesmas</th>
+                                <th data-priority="3" class="text-start">Dilaporkan Pada</th>
+                                <th data-priority="4" class="text-start">Nilai</th>
+                                <th data-priority="5" class="text-start">Capaian</th>
+                                <th data-priority="6" class="text-start">Target</th>
+                                <th data-priority="7" class="text-start">Options</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(user, index) in user" :key="index">
                                 <td>
-                                    <span><span class="mr-5 font-bold">{{ index + 1 }}</span>{{ user.name }}</span>
+                                    <span class="font-bold">
+                                        {{ index + 1 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ user.name }}
                                 </td>
                                 <td>
                                     <div v-for="(data, index) in data.filter(item => item.id_users == user.id)"
@@ -102,7 +115,7 @@ $(document).ready(function () {
                                     </div>
                                 </td>
                                 <td>
-                                    {{ sub.target + ' %' }}
+                                    <span v-for="(dat, index) in typeNah.filter(item => item.label === sub.type_target)" :key="index">{{ dat.value }}</span> {{ sub.target + ' %' }}
                                 </td>
                                 <td class="flex items-center">
                                     <Link :href="route('mutu.detail.admin.user', { id: sub.id, id_user: user.id })"

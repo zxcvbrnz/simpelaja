@@ -98,12 +98,12 @@ const submitCreate = () => {
                                 <InputLabel for="sdm" value="Nama SDM" />
 
                                 <TextInput id="sdm" v-model="form.nama_sdm" type="text" class="mt-1 block w-full"
-                                    autocomplete="sdm" />
+                                    autocomplete="sdm" required />
 
                                 <InputError :message="form.errors.nama_sdm" class="mt-2" />
                             </div>
                             <div>
-                                <InputLabel for="jumlah" value="Jumlah SDM" />
+                                <InputLabel for="jumlah" value="Jumlah SDM" required />
 
                                 <TextInput id="jumlah" v-model="form.jumlah_sdm" type="number" class="mt-1 block w-full"
                                     autocomplete="sdm" />

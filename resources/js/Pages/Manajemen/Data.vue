@@ -127,7 +127,7 @@ const submitCreate = () => {
                         <form @submit.prevent="submitCreate" class="space-y-2 w-full">
                             <InputLabel>Skala</InputLabel>
                             <div>
-                                <select name="" id="" v-model="form.skala"
+                                <select name="" id="" v-model="form.skala" required
                                     class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm w-full">
                                     <option value="" disabled hidden class="text-gray-500">Pilih Skala</option>
                                     <option v-for="(opt, index) in skalaOptions" :key="index" :value="opt.value">{{

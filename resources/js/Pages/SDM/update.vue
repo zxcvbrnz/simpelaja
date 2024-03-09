@@ -98,7 +98,7 @@ const submitEdit = () => {
                                 <InputLabel for="sdm" value="Nama SDM" />
 
                                 <TextInput id="sdm" v-model="form.nama_sdm" type="text" class="mt-1 block w-full"
-                                    autocomplete="sdm" />
+                                    autocomplete="sdm" required />
 
                                 <InputError :message="form.errors.nama_sdm" class="mt-2" />
                             </div>
@@ -106,7 +106,7 @@ const submitEdit = () => {
                                 <InputLabel for="jumlah" value="Jumlah SDM" />
 
                                 <TextInput id="jumlah" v-model="form.jumlah_sdm" type="number" class="mt-1 block w-full"
-                                    autocomplete="penduduk" />
+                                    autocomplete="penduduk" required />
 
                                 <InputError :message="form.errors.jumlah_sdm" class="mt-2" />
                             </div>

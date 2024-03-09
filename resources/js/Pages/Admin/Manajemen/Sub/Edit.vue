@@ -101,7 +101,7 @@ const submitCreate = () => {
                                 <InputLabel for="nama_submanajemen" value="Nama Manajemen" />
 
                                 <TextInput id="nama_submanajemen" v-model="form.nama_submanajemen" type="text"
-                                    class="mt-1 block w-full" autocomplete="nama_submanajemen" />
+                                    class="mt-1 block w-full" autocomplete="nama_submanajemen" required />
 
                                 <InputError :message="form.errors.nama_submanajemen" class="mt-2" />
                             </div>
@@ -109,7 +109,7 @@ const submitCreate = () => {
                                 <InputLabel for="ket_nilai_0" value="Keterangan Nilai 0" />
 
                                 <TextInput id="ket_nilai_0" v-model="form.ket_nilai_0" type="text" class="mt-1 block w-full"
-                                    autocomplete="ket_nilai_0" />
+                                    autocomplete="ket_nilai_0" required />
 
                                 <InputError :message="form.errors.ket_nilai_0" class="mt-2" />
                             </div>
@@ -117,7 +117,7 @@ const submitCreate = () => {
                                 <InputLabel for="ket_nilai_4" value="Keterangan Nilai 4" />
 
                                 <TextInput id="ket_nilai_4" v-model="form.ket_nilai_4" type="text" class="mt-1 block w-full"
-                                    autocomplete="ket_nilai_4" />
+                                    autocomplete="ket_nilai_4" required />
 
                                 <InputError :message="form.errors.ket_nilai_4" class="mt-2" />
                             </div>
@@ -127,7 +127,7 @@ const submitCreate = () => {
                                 <InputLabel for="ket_nilai_7" value="Keterangan Nilai 7" />
 
                                 <TextInput id="ket_nilai_7" v-model="form.ket_nilai_7" type="text" class="mt-1 block w-full"
-                                    autocomplete="ket_nilai_7" />
+                                    autocomplete="ket_nilai_7" required />
 
                                 <InputError :message="form.errors.ket_nilai_7" class="mt-2" />
                             </div>
@@ -135,7 +135,7 @@ const submitCreate = () => {
                                 <InputLabel for="ket_nilai_10" value="Keterangan Nilai 10" />
 
                                 <TextInput id="ket_nilai_10" v-model="form.ket_nilai_10" type="text"
-                                    class="mt-1 block w-full" autocomplete="ket_nilai_10" />
+                                    class="mt-1 block w-full" autocomplete="ket_nilai_10" required />
 
                                 <InputError :message="form.errors.ket_nilai_10" class="mt-2" />
                             </div>

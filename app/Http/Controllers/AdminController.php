@@ -200,7 +200,7 @@ class AdminController extends Controller
 
         $now = Carbon::now()->subDay(env('DELAY_INPUT_DATA'));
 
-        $sub = nasionalmutu::findOrFail($id, ['id', 'mutu', 'target']);
+        $sub = nasionalmutu::findOrFail($id, ['id', 'mutu', 'target', 'type_target']);
 
         $data_ni = nilai_nasionalmutu::where('id_nasionalmutu', $id)
             ->whereMonth('data_untuk', $now->month)

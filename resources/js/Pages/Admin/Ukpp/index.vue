@@ -96,14 +96,21 @@ $(document).ready(function () {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
-                                <th data-priority="1" class="text-start">Pelayanan</th>
+                                <th data-priority="1" class="text-start">No</th>
+                                <th data-priority="2" class="text-start">Pelayanan</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(data, index) in data" :key="index">
+                                <td>
+                                    <span class="font-bold">
+                                        {{ index + 1 }}
+                                    </span>
+                                </td>
                                 <td class="flex justify-between items-center">
-                                    <span><span class="mr-5 font-bold overflow-hidden whitespace-nowrap text-ellipsis">{{
-                                        index + 1 }}</span>{{ data.pelayanan }}</span>
+                                    <span class="overflow-hidden whitespace-nowrap text-ellipsis">
+                                        {{ data.pelayanan }}
+                                    </span>
                                     <div class="flex justify-center space-x-4 items-center">
                                         <Link :href="route('pelayanan.detail', { id: data.id })"
                                             class="text-teal-600 hover:text-teal-500">

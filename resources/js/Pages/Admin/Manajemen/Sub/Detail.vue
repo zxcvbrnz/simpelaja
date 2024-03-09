@@ -83,16 +83,22 @@ $(document).ready(function () {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
-                                <th data-priority="1" class="text-start">Puskesmas</th>
-                                <th data-priority="2" class="text-start">Dilaporkan Pada</th>
-                                <th data-priority="3" class="text-start">Skala</th>
+                                <th data-priority="1" class="text-start">No</th>
+                                <th data-priority="2" class="text-start">Puskesmas</th>
+                                <th data-priority="3" class="text-start">Dilaporkan Pada</th>
+                                <th data-priority="4" class="text-start">Skala</th>
                                 <th data-priority="5" class="text-start">Options</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(user, index) in user" :key="index">
                                 <td>
-                                    <span><span class="mr-5 font-bold">{{ index + 1 }}</span>{{ user.name }}</span>
+                                    <span class="font-bold">
+                                        {{ index + 1 }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {{ user.name }}
                                 </td>
                                 <td>
                                     <div v-for="(data, index) in data.filter(item => item.id_users == user.id)"

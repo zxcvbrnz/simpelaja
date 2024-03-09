@@ -1,0 +1,190 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SimpelAja API Documentation",
+        "description": "Dokumentasi API Simpelaja.id adalah sumber informasi resmi yang memberikan panduan lengkap tentang penggunaan API yang disediakan oleh platform tersebut. Dokumentasi ini mencakup semua endpoint yang tersedia, beserta parameter yang diperlukan dan jenis respons yang diharapkan. Pengguna akan menemukan contoh-contoh penggunaan API untuk berbagai fitur yang ditawarkan oleh Simpelaja.id, seperti pengelolaan akun, penjadwalan layanan, dan interaksi dengan data. Dokumentasi ini dirancang untuk memudahkan pengembang memahami dan memanfaatkan API Simpelaja.id dalam pengembangan aplikasi atau integrasi dengan sistem lainnya.",
+        "contact": {
+            "email": "tebarkode@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/",
+            "description": "API Server"
+        }
+    ],
+    "paths": {
+        "/api/user": {
+            "get": {
+                "tags": [
+                    "Data Puskesmas"
+                ],
+                "summary": "Get Daftar Data Puskesmas",
+                "description": "Return Data Puskesmas(profile,desa,sdm)",
+                "operationId": "puskesmas",
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/ukm": {
+            "get": {
+                "tags": [
+                    "Upaya Kesehatan Masyarakat (UKM)"
+                ],
+                "summary": "Get Daftar Program/Upaya",
+                "description": "Return Daftar Data Program,Subprogram,Satuan,Target",
+                "operationId": "ukm",
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/ukpp": {
+            "get": {
+                "tags": [
+                    "Upaya Kesehatan Perseorangan Dan Penunjang(UKPP)"
+                ],
+                "summary": "Get Daftar data Jenis Variabel Pelayanan",
+                "description": "Return Daftar Data Pelayanan,Subpelayanan,Satuan,Target",
+                "operationId": "ukpp",
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/manajemen": {
+            "get": {
+                "tags": [
+                    "Manajemen Puskesmas"
+                ],
+                "summary": "Get Daftar data Jenis Variabel Manajemen",
+                "description": "Return Daftar Data Manajemen,Submanajemen",
+                "operationId": "manajemen",
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/nasional-mutu": {
+            "get": {
+                "tags": [
+                    "Nasional Mutu"
+                ],
+                "summary": "Get Daftar Data Indikator Nasional Mutu",
+                "description": "Return Daftar Data Nasional Mutu,Target",
+                "operationId": "nasinalmutu",
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/{$id_user}/ukm": {
+            "get": {
+                "tags": [
+                    "Nilai Indikator"
+                ],
+                "summary": "Get Daftar Nilai UKM by $id_user",
+                "description": "Return Daftar Nilai UKM by $id_user",
+                "operationId": "nilai ukm",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "cari berdasarkan id pada user",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/{$id_user}/ukpp": {
+            "get": {
+                "tags": [
+                    "Nilai Indikator"
+                ],
+                "summary": "Get Daftar Nilai UKPP by $id_user",
+                "description": "Return Daftar Nilai UKPP by $id_user",
+                "operationId": "nilai ukpp",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "cari berdasarkan id pada user",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/{id_user}/manajemen": {
+            "get": {
+                "tags": [
+                    "Nilai Indikator"
+                ],
+                "summary": "Get Daftar Nilai Manajemen by $id_user",
+                "description": "Return Daftar Nilai Manajemen by $id_user",
+                "operationId": "nilai manajemen",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "cari berdasarkan id pada user",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        },
+        "/api/{$id_user}/nasional-mutu": {
+            "get": {
+                "tags": [
+                    "Nilai Indikator"
+                ],
+                "summary": "Get Daftar Nilai Nasional Mutu by $id_user",
+                "description": "Return Daftar Nilai Nasional Mutu by $id_user",
+                "operationId": "nilai nasionalmutu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "cari berdasarkan id pada user",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "default": {
+                        "description": "indikator bro"
+                    }
+                }
+            }
+        }
+    }
+}

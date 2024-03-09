@@ -78,18 +78,21 @@ $(document).ready(function () {
                     <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
-                                <th data-priority="1" class="text-start">Program</th>
+                                <th data-priority="1" class="text-start">No</th>
+                                <th data-priority="2" class="text-start">Program</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(data, index) in  data " :key="index">
+                                <td>
+                                    <span class="font-bold">
+                                        {{ index + 1 }}
+                                    </span>
+                                </td>
                                 <td class="flex justify-between">
                                     <div class="flex items-center">
-                                        <span class="font-bold">{{
-                                            index + 1 }}
-                                            <span class="ml-4 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
-                                                {{ data.nama_submanajemen }}
-                                            </span>
+                                        <span class="ml-4 font-normal overflow-hidden whitespace-nowrap text-ellipsis">
+                                            {{ data.nama_submanajemen }}
                                         </span>
                                         <div class="ml-4"
                                             v-for="(cap, index) in skala.filter(item => item.id_submanajemen == data.id)"
