@@ -13,6 +13,13 @@ $(document).ready(function () {
         .columns.adjust()
         .responsive.recalc();
 });
+
+const typeNah = [
+    { value: '>', label: 1 },
+    { value: '<', label: 2 },
+    { value: '>=', label: 3 },
+    { value: '<=', label: 4 }
+];
 </script>
 
 <template>
@@ -108,7 +115,7 @@ $(document).ready(function () {
                                     </div>
                                 </td>
                                 <td>
-                                    {{ sub.target + ' %' }}
+                                    <span v-for="(dat, index) in typeNah.filter(item => item.label === sub.type_target)" :key="index">{{ dat.value }}</span> {{ sub.target + ' %' }}
                                 </td>
                                 <td class="flex items-center">
                                     <Link :href="route('mutu.detail.admin.user', { id: sub.id, id_user: user.id })"
