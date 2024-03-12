@@ -18,7 +18,7 @@ class UkmController extends Controller
     // SEMUA FUNCTION UNTUK PROGRAM UKM
 
     // view list program UKM
-    // untuk admin dan 
+    // untuk admin dan
     // puskes hanya bisa lihat list
     public function program()
     {
@@ -69,7 +69,7 @@ class UkmController extends Controller
     // SEMUA FUNCTION UNTUK SUBPROGRAM UKM
 
     // view list subprogram UKM
-    // untuk admin dan 
+    // untuk admin dan
     // puskesmas hanya bisa lihat list
     public function subprogram(Request $request, $id)
     {
