@@ -19,7 +19,7 @@
         }
     ],
     "paths": {
-        "/api/user": {
+        "/api/users": {
             "get": {
                 "tags": [
                     "Data Puskesmas"
@@ -28,8 +28,14 @@
                 "description": "Return Data Puskesmas(profile,desa,sdm)",
                 "operationId": "puskesmas",
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
@@ -43,8 +49,14 @@
                 "description": "Return Daftar Data Program,Subprogram,Satuan,Target",
                 "operationId": "ukm",
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
@@ -58,13 +70,19 @@
                 "description": "Return Daftar Data Pelayanan,Subpelayanan,Satuan,Target",
                 "operationId": "ukpp",
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
         },
-        "/api/manajemen": {
+        "/api/manajemen-puskesmas": {
             "get": {
                 "tags": [
                     "Manajemen Puskesmas"
@@ -73,8 +91,14 @@
                 "description": "Return Daftar Data Manajemen,Submanajemen",
                 "operationId": "manajemen",
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
@@ -88,100 +112,142 @@
                 "description": "Return Daftar Data Nasional Mutu,Target",
                 "operationId": "nasinalmutu",
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
         },
-        "/api/{$id_user}/ukm": {
+        "/api/{id_user}/ukm": {
             "get": {
                 "tags": [
                     "Nilai Indikator"
                 ],
-                "summary": "Get Daftar Nilai UKM by $id_user",
-                "description": "Return Daftar Nilai UKM by $id_user",
+                "summary": "Get Daftar Nilai UKM by id_user",
+                "description": "Return Daftar Nilai UKM by id_user",
                 "operationId": "nilai ukm",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "id_user",
                         "in": "path",
                         "description": "cari berdasarkan id pada user",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
         },
-        "/api/{$id_user}/ukpp": {
+        "/api/{id_user}/ukpp": {
             "get": {
                 "tags": [
                     "Nilai Indikator"
                 ],
-                "summary": "Get Daftar Nilai UKPP by $id_user",
-                "description": "Return Daftar Nilai UKPP by $id_user",
+                "summary": "Get Daftar Nilai UKPP by id_user",
+                "description": "Return Daftar Nilai UKPP by id_user",
                 "operationId": "nilai ukpp",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "id_user",
                         "in": "path",
                         "description": "cari berdasarkan id pada user",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
         },
-        "/api/{id_user}/manajemen": {
+        "/api/{id_user}/manajemen-puskesmas": {
             "get": {
                 "tags": [
                     "Nilai Indikator"
                 ],
-                "summary": "Get Daftar Nilai Manajemen by $id_user",
-                "description": "Return Daftar Nilai Manajemen by $id_user",
+                "summary": "Get Daftar Nilai Manajemen by id_user",
+                "description": "Return Daftar Nilai Manajemen by id_user",
                 "operationId": "nilai manajemen",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "id_user",
                         "in": "path",
                         "description": "cari berdasarkan id pada user",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
         },
-        "/api/{$id_user}/nasional-mutu": {
+        "/api/{id_user}/nasional-mutu": {
             "get": {
                 "tags": [
                     "Nilai Indikator"
                 ],
-                "summary": "Get Daftar Nilai Nasional Mutu by $id_user",
-                "description": "Return Daftar Nilai Nasional Mutu by $id_user",
+                "summary": "Get Daftar Nilai Nasional Mutu by id_user",
+                "description": "Return Daftar Nilai Nasional Mutu by id_user",
                 "operationId": "nilai nasionalmutu",
                 "parameters": [
                     {
-                        "name": "id",
+                        "name": "id_user",
                         "in": "path",
                         "description": "cari berdasarkan id pada user",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "default": {
-                        "description": "indikator bro"
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "Not found"
+                    },
+                    "500": {
+                        "description": "Server error"
                     }
                 }
             }
