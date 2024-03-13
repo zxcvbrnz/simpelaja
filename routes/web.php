@@ -193,6 +193,7 @@ Route::middleware('auth')->group(function () {
         // Nasional Mutu
         Route::post('/indikator/nasional-mutu', [NasionalmutuController::class, 'mutu'])->name('filter.nasionalmutu');
         Route::get('/indikator/nasional-mutu/{id}/data', [NasionalmutuController::class, 'nilai_mutu'])->name('nasionalmutu.detail.data');
+        Route::post('/indikator/nasional-mutu/{id}/data', [NasionalmutuController::class, 'creating_nilai_mutu'])->name('nasionalmutu.add.data');
 
         Route::get('/nasionalmutu-export/{start_time}/{end_time}', [NasionalmutuController::class, 'export'])->name('nasionalmutu.export');
     });

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\manajemen;
 use App\Models\nasionalmutu;
+use App\Models\nilai_manajemen;
 use App\Models\nilai_ukm;
+use App\Models\nilai_pelayanan;
+use App\Models\nilai_nasionalmutu;
 use App\Models\pelayanan;
 use App\Models\submanajemen;
 use App\Models\subprogram;
@@ -295,43 +298,48 @@ class apiControllers extends Controller
         try {
             $user = user::findOrFail($id);
             $ukm = ukm::get();
-            $subprograms = subprogram::get();
+
             $data = [
                 'id' => $user->id,
                 'name' => $user->name,
-                'email' => $user->email,
-                'Indikator' => 'Upaya Kesehatan Masyarakat',
+                'indikator_name' => 'Upaya Kesehatan Masyarakat',
+                'indikator' => []
             ];
 
             foreach ($ukm as $u) {
-                $dataukm = [
-                    $u->program => $subprograms->where('id_ukm', $u->id)->map(function ($subprogram) use ($id) {
-                        $nilais = nilai_ukm::where('id_users', $id)
-                            ->where('id_subprogram_ukm', $subprogram->id)
-                            ->select('created_at', 'hasil', 'pembilang', 'penyebut', 'target', 'data_untuk') // Select created_at along with nilai
-                            ->get()
-                            ->toArray();
+                $subprograms = subprogram::where('id_ukm', $u->id)->get();
+                $ukmData = [];
 
-                        // Iterate over each nilai_ukm object and extract attributes
-                        $nilaiData = collect($nilais)->map(function ($nilai) use ($subprogram) {
-                            return [
-                                'data' => Carbon::parse($nilai['data_untuk'])->format('F Y'),
-                                $subprogram->str_pembilang => $nilai['pembilang'] . ' ' . $subprogram->satuan,
-                                $subprogram->str_penyebut => $nilai['penyebut'] . ' ' . $subprogram->satuan,
-                                'capaian' => $nilai['hasil'] . $subprogram->str_target,
-                                'target' => $nilai['target'] . $subprogram->str_target,
-                                'created_at' => Carbon::parse($nilai['created_at'])->format('d F Y h:i'),
-                            ];
-                        });
+                foreach ($subprograms as $subprogram) {
+                    $nilais = nilai_ukm::where('id_users', $id)
+                        ->where('id_subprogram_ukm', $subprogram->id)
+                        ->select('created_at', 'hasil', 'pembilang', 'penyebut', 'target', 'data_untuk')
+                        ->get()
+                        ->toArray();
 
+                    $nilaiData = collect($nilais)->map(function ($nilai) use ($subprogram) {
                         return [
-                            $subprogram->nama => $nilaiData->toArray() // Convert to array
+                            'data' => Carbon::parse($nilai['data_untuk'])->format('F Y'),
+                            $subprogram->str_pembilang => $nilai['pembilang'] . ' ' . $subprogram->satuan,
+                            $subprogram->str_penyebut => $nilai['penyebut'] . ' ' . $subprogram->satuan,
+                            'capaian' => $nilai['hasil'] . $subprogram->str_target,
+                            'target' => $nilai['target'] . $subprogram->str_target,
+                            'created_at' => Carbon::parse($nilai['created_at'])->format('d F Y h:i'),
                         ];
-                    })->values()->toArray()
-                ];
+                    });
 
-                // Add $dataukm directly to $data without merging
-                $data += $dataukm;
+                    $ukmData[] = [
+                        'id' => $subprogram->id,
+                        'name' => $subprogram->nama,
+                        'data' => $nilaiData->toArray()
+                    ];
+                }
+
+                $data['indikator'][] = [
+                    'id' => $u->id,
+                    'program' => $u->program,
+                    'data' => $ukmData
+                ];
             }
 
             return response()->json($data, 200);
@@ -372,6 +380,57 @@ class apiControllers extends Controller
      */
     public function nilai_ukpp($id)
     {
+        try {
+            $user = user::findOrFail($id);
+            $ukm = ukpp::get();
+
+            $data = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'indikator_name' => 'Upaya Kesehatan Perseorangan dan Penunjang',
+                'indikator' => []
+            ];
+
+            foreach ($ukm as $u) {
+                $pelayanans = pelayanan::where('id_ukpp', $u->id)->get();
+                $ukppData = [];
+
+                foreach ($pelayanans as $pelayanan) {
+                    $nilais = nilai_pelayanan::where('id_users', $id)
+                        ->where('id_subpelayanan_ukpp', $pelayanan->id)
+                        ->select('created_at', 'hasil', 'pembilang', 'penyebut', 'target', 'data_untuk')
+                        ->get()
+                        ->toArray();
+
+                    $nilaiData = collect($nilais)->map(function ($nilai) use ($pelayanan) {
+                        return [
+                            'data' => Carbon::parse($nilai['data_untuk'])->format('F Y'),
+                            $pelayanan->str_pembilang => $nilai['pembilang'] . ' ' . $pelayanan->satuan,
+                            $pelayanan->str_penyebut => $nilai['penyebut'] . ' ' . $pelayanan->satuan,
+                            'capaian' => $nilai['hasil'] . $pelayanan->str_target,
+                            'target' => $nilai['target'] . $pelayanan->str_target,
+                            'created_at' => Carbon::parse($nilai['created_at'])->format('d F Y h:i'),
+                        ];
+                    });
+
+                    $ukppData[] = [
+                        'id' => $pelayanan->id,
+                        'name' => $pelayanan->subpelayanan,
+                        'data' => $nilaiData->toArray()
+                    ];
+                }
+
+                $data['indikator'][] = [
+                    'id' => $u->id,
+                    'program' => $u->pelayanan,
+                    'data' => $ukppData
+                ];
+            }
+
+            return response()->json($data, 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 400, 'message' => 'user tidak ditemukan'], 400);
+        }
     }
     /**
      * @OA\Get(
@@ -406,6 +465,54 @@ class apiControllers extends Controller
      */
     public function nilai_manajemen($id)
     {
+        try {
+            $user = user::findOrFail($id);
+            $manajemen = manajemen::get();
+
+            $data = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'indikator_name' => 'Upaya Kesehatan Masyarakat',
+                'indikator' => []
+            ];
+
+            foreach ($manajemen as $u) {
+                $submanajemen = submanajemen::where('id_manajemen', $u->id)->get();
+                $manajemenData = [];
+
+                foreach ($submanajemen as $submanajemen) {
+                    $nilais = nilai_manajemen::where('id_users', $id)
+                        ->where('id_submanajemen', $submanajemen->id)
+                        ->select('created_at', 'hasil', 'ket_skala', 'data_untuk')
+                        ->get()
+                        ->toArray();
+
+                    $nilaiData = collect($nilais)->map(function ($nilai) use ($submanajemen) {
+                        return [
+                            'data' => Carbon::parse($nilai['data_untuk'])->format('F Y'),
+                            'skala' => $nilai['hasil'],
+                            'keterangan' => $nilai['ket_skala'],
+                            'created_at' => Carbon::parse($nilai['created_at'])->format('d F Y h:i'),
+                        ];
+                    });
+
+                    $manajemenData[] = [
+                        'id' => $submanajemen->id,
+                        'name' => $submanajemen->nama_submanajemen,
+                        'data' => $nilaiData->toArray()
+                    ];
+                }
+
+                $data['indikator'][] = [
+                    'id' => $u->id,
+                    'manajemen' => $u->manajemen,
+                    'data' => $manajemenData
+                ];
+            }
+            return response()->json($data, 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 400, 'message' => 'user tidak ditemukan'], 400);
+        }
     }
     /**
      * @OA\Get(
@@ -440,5 +547,54 @@ class apiControllers extends Controller
      */
     public function nilai_nasionalmutu($id)
     {
+        try {
+            $user = user::findOrFail($id);
+            $nasionalmutus = nasionalmutu::get();
+
+            $data = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'indikator_name' => 'Nasional Mutu',
+                'indikator' => []
+            ];
+
+            $typeNah = collect([
+                ['value' => '>', 'label' => 1],
+                ['value' => '<', 'label' => 2],
+                ['value' => '>=', 'label' => 3],
+                ['value' => '<=', 'label' => 4]
+            ]);
+
+            foreach ($nasionalmutus as $u) {
+                $nilais = nilai_nasionalmutu::where('id_users', $id)
+                    ->where('id_nasionalmutu', $u->id)
+                    ->select('created_at', 'hasil', 'pembilang', 'penyebut', 'target', 'data_untuk')
+                    ->get()
+                    ->toArray();
+
+                $nilaiData = collect($nilais)->map(function ($nilai) use ($u, $typeNah) {
+                    return [
+                        'data' => Carbon::parse($nilai['data_untuk'])->format('F Y'),
+                        $u->str_pembilang => $nilai['pembilang'] . ' ' . $u->satuan,
+                        $u->str_penyebut => $nilai['penyebut'] . ' ' . $u->satuan,
+                        'capaian' => $nilai['hasil'] . '%',
+                        'target' => $typeNah->map(function ($type) use ($u) {
+                            // Implement your logic here based on $type and $m
+                            return $u->type_target == $type['label'] ? $type['value'] . $u->target . '%' : null;
+                        })->filter()->first(),
+                        'created_at' => Carbon::parse($nilai['created_at'])->format('d F Y h:i'),
+                    ];
+                });
+
+                $data['indikator'][] = [
+                    'id' => $u->id,
+                    'program' => $u->mutu,
+                    'data' => $nilaiData
+                ];
+            }
+            return response()->json($data, 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json(['error' => 400, 'message' => 'user tidak ditemukan'], 400);
+        }
     }
 }
