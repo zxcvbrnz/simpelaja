@@ -27,4 +27,4 @@ Route::get('/nasional-mutu', [apiControllers::class, 'nasionalmutu']);
 Route::get('/{id_user}/ukm', [apiControllers::class, 'nilai_ukm']);
 Route::get('/{id_user}/ukpp', [apiControllers::class, 'nilai_ukpp']);
 Route::get('/{id_user}/manajemen-puskesmas', [apiControllers::class, 'nilai_manajemen']);
-Route::get('/{id_user}/nasional-mutu', [apiControllers::class, 'nilai_mutu']);
+Route::get('/{id_user}/nasional-mutu', [apiControllers::class, 'nilai_nasionalmutu']);

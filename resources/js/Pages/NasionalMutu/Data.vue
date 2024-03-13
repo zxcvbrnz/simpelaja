@@ -22,7 +22,7 @@ const form = useForm({
 });
 
 const submitCreate = () => {
-    form.post(route('program.data.add', { id_sub: sub.id }), {
+    form.post(route('nasionalmutu.add.data', { id: sub.id }), {
         onSuccess: () => {
             Swal.fire({
                 title: 'Berhasil!',
