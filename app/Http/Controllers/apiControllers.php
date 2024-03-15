@@ -106,8 +106,11 @@ class apiControllers extends Controller
 
         foreach ($ukm as $u) {
             $dataukm = [
-                $u->program =>  $subprograms->where('id_ukm', $u->id)->map(function ($subprogram) {
+                'id' => $u->id,
+                'name' => $u->program,
+                 'indikator' => $subprograms->where('id_ukm', $u->id)->map(function ($subprogram) {
                     return [
+                        'id' => $subprogram->id,
                         'nama' => $subprogram->nama,
                         'satuan' => $subprogram->satuan,
                         'target' => $subprogram->target . $subprogram->str_target
@@ -148,8 +151,11 @@ class apiControllers extends Controller
 
         foreach ($ukpp as $u) {
             $dataukpp = [
-                $u->pelayanan =>  $sub->where('id_ukpp', $u->id)->map(function ($sub) {
+                'id' => $u->id,
+                'name' => $u->pelayanan,
+                'indikator' =>  $sub->where('id_ukpp', $u->id)->map(function ($sub) {
                     return [
+                        'id' => $sub->id,
                         'nama' => $sub->subpelayanan,
                         'satuan' => $sub->satuan,
                         'target' => $sub->target . $sub->str_target
@@ -190,8 +196,11 @@ class apiControllers extends Controller
 
         foreach ($manajemen as $u) {
             $datamanajemen = [
-                $u->manajemen =>  $sub->where('id_manajemen', $u->id)->map(function ($sub) {
+                'id' => $u->id,
+                'name' => $u->manajemen,
+                'indikator' =>  $sub->where('id_manajemen', $u->id)->map(function ($sub) {
                     return [
+                        'id' => $sub->id,
                         'nama' => $sub->nama_submanajemen,
                         'nilai_0' => $sub->ket_nilai_0,
                         'nilai_4' => $sub->ket_nilai_4,
@@ -240,6 +249,7 @@ class apiControllers extends Controller
 
         foreach ($mutu as $m) {
             $datamutu = [
+                'id' => $m->id,
                 'nama' => $m->mutu,
                 'target' => $typeNah->map(function ($type) use ($m) {
                     // Implement your logic here based on $type and $m
