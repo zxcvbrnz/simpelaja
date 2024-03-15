@@ -52,12 +52,29 @@ $(document).ready(function () {
     myChart = new Chart(ctx, {
         type: 'radar',
         data: {
-            labels: data.map(item => item.nama),
+            labels: data.map(item => item.mutu),
             datasets: [{
                 label: 'Capaian',
                 data: data.map(item => grapik.value[item.id] || 0),
-                borderWidth: 1
-            }]
+                fill: true,
+                backgroundColor: "rgba(54, 162, 235, 0.2)",
+                borderColor: "rgb(54, 162, 235)",
+                pointBackgroundColor: "rgb(54, 162, 235)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "rgb(54, 162, 235)",
+            },
+            {
+                label: "Target",
+                data: data.map((item) => item.target),
+                fill: true,
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                borderColor: "rgb(255, 99, 132)",
+                pointBackgroundColor: "rgb(255, 99, 132)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "rgb(255, 99, 132)",
+            },]
         },
         options: {
             scales: {
@@ -73,6 +90,7 @@ $(document).ready(function () {
 </script>
 
 <template>
+
     <Head title="Indikator Upaya Kesehatan Masyarakat" />
 
     <AuthenticatedLayout>
@@ -111,7 +129,8 @@ $(document).ready(function () {
                     </ol>
                 </nav>
                 <div class="mt-6 p-6 bg-white shadow-md rounded-sm">
-                    <table id="example" class="stripe hover" style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
+                    <table id="example" class="stripe hover"
+                        style="width:100%; padding-top: 1em;  padding-bottom: 1em;">
                         <thead>
                             <tr>
                                 <th data-priority="1" class="text-start">No</th>
